@@ -1,6 +1,7 @@
 #include <iostream>
-
+#include <boost/system/error_code.hpp>
 int main()
 {
-    std::cout << "Ddfgbndf" << std::endl;
+    using namespace boost::system;
+    std::cout << "ggggzdssfdgggggggggg" << std::endl;
 }
