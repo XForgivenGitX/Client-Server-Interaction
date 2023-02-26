@@ -25,13 +25,6 @@ namespace detail
 
 namespace server 
 {
-	namespace used
-	{
-		//using boost::asio::ip::address_v4;
-		//using boost::asio::async_write;
-		//using boost::asio::buffer;
-	}
-	
 	class task_processor : public detail::Singleton<task_processor>
 	{
 		friend Singleton<task_processor>;
