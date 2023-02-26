@@ -11,5 +11,4 @@ include_directories("./common")
 aux_source_directory("./server" MAIN)
 
 add_executable (${PROJECT_NAME} ${MAIN})
-
 target_link_libraries (${PROJECT_NAME} ${Boost_LIBRARIES})

@@ -27,9 +27,9 @@ namespace server
 {
 	namespace used
 	{
-		using boost::asio::ip::address_v4;
-		using boost::asio::async_write;
-		using boost::asio::buffer;
+		//using boost::asio::ip::address_v4;
+		//using boost::asio::async_write;
+		//using boost::asio::buffer;
 	}
 	
 	class task_processor : public detail::Singleton<task_processor>
@@ -38,7 +38,7 @@ namespace server
 		task_processor() = default;
 	
 	protected:
-		static used::io_service& get_ios()
+		static io::io_service& get_ios()
 		{
 			static io::io_service ios;
 			static io::io_service::work work(ios);
