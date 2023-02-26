@@ -1,17 +1,15 @@
 #include <iostream>
-#include <string>
 #include <boost/system/error_code.hpp>
-#include <Inc/TaskProcessor.hpp>
-#define __WIN32_WINNT 0x0601
+#include "TaskProcessor.hpp"
 
 int main()
 {
-    std::cout << "Enter command\n";
+    using namespace boost::detail;
     std::string command;
-    while(1)
-    {
+    //while(1)
+   // {
         std::cout << ">";
         std::getline(std::cin, command);
-        system(command.c_str());
-    }
+        //system(command.c_str());
+    //}
 }
