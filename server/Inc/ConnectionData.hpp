@@ -11,6 +11,11 @@ namespace server
 		void shutdown();
 		~ConnectionData();
 	};
+	typedef std::unique_ptr<ConnectionData> ConnectionDataPtr;
+
+	void async_write_data(ConnectionDataPtr&& dataPtr);
+	void on_send(ConnectionDataPtr&& dataPtr, const boost::system::error_code& error);
+	void send();
 }
 
 

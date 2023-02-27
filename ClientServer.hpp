@@ -10,6 +10,7 @@
 #include <boost/asio/ip/tcp.hpp>
 #include <boost/system/error_code.hpp>
 #include <boost/thread/thread.hpp>
+#include <boost/asio/write.hpp>
 
 #define io__ boost::asio
 

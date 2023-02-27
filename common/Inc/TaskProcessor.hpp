@@ -16,7 +16,8 @@ namespace detail
         friend Singleton<TaskProcessor>;
         TaskProcessor() = default;
 
-    protected:
+    //protected:
+    public:   
         static io__::io_service &get_ios();
         
     public:
@@ -25,6 +26,6 @@ namespace detail
         static void stop();
 
     public:
-        static std::unique_ptr<server::ConnectionData> create_connection(std::string address, unsigned short port_num);
+        static server::ConnectionDataPtr create_connection(std::string address, unsigned short port_num);
     };
 }

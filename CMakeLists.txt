@@ -8,10 +8,10 @@ set (INCLUDES
   "./"
 )
 set (SERVER_SOURCES 
-  "server/Src/main.cpp"  
   "server/Src/ConnectionData.cpp"
   "common/Src/TaskProcessor.cpp"
   "common/Src/TaskWrapped.cpp"
+  "server/Src/main.cpp"  
 ) 
 #####
 set (BOOST_ROOT "D:/SOFT/boost_1_81_0/boost/")
