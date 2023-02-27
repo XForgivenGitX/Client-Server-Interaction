@@ -100,7 +100,17 @@
         "typeindex": "cpp",
         "valarray": "cpp",
         "variant": "cpp",
-        "*.ipp": "cpp"
+        "*.ipp": "cpp",
+        "resumable": "cpp",
+        "format": "cpp",
+        "locale": "cpp",
+        "xhash": "cpp",
+        "xlocbuf": "cpp",
+        "xlocmes": "cpp",
+        "xlocmon": "cpp",
+        "xloctime": "cpp",
+        "xtree": "cpp"
     },
+    "editor.insertSpaces": true,
     "C_Cpp.errorSquiggles": "enabled"
 }
