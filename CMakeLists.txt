@@ -14,7 +14,7 @@ set (SERVER_SOURCES
   "server/Src/main.cpp"  
 ) 
 #####
-set (BOOST_ROOT "C:/Users/User/source/boost_1_81_0/")
+set (BOOST_ROOT "D:/SOFT/boost_1_81_0/boost/")
 set (Boost_USE_STATIC_LIBS ON)
 set (Boost_USE_MULTITHREADED ON)
 set (BOOST_COMPONENTS thread system)
