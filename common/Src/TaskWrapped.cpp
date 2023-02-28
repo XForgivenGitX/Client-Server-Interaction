@@ -47,8 +47,8 @@ task::TaskWrappedWithConnections<T>::TaskWrappedWithConnections(server::Connecti
 }
 
 template <typename T>
-void task::TaskWrappedWithConnections<T>::operator()(const boost::system::error_code &error, std::size_t bytes_count)
+void task::TaskWrappedWithConnections<T>::operator()(const boost::system::error_code &error, std::size_t bytes_transferred)
 {
-    data_->data.resize(bytes_count);
-    taskUnwrapped_(std::move(data_), error);
+    data_->data.resize(bytes_transferred);
+    taskUnwrapped_(error, std::move(data_));
 }

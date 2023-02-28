@@ -26,6 +26,6 @@ namespace detail
         static void stop();
 
     public:
-        static server::ConnectionDataPtr create_connection(std::string address, unsigned short port_num);
+        static server::ConnectionDataPtr create_connection(const std::string& address, const unsigned short port_num);
     };
 }

@@ -19,6 +19,6 @@ namespace task
         server::ConnectionDataPtr data_;
         T taskUnwrapped_;
         explicit TaskWrappedWithConnections(server::ConnectionDataPtr&& data, T& taskUnwrapped);
-        void operator()(const boost::system::error_code& error, std::size_t bytes_count);
+        void operator()(const boost::system::error_code& error, std::size_t bytes_transferred);
     };
 }

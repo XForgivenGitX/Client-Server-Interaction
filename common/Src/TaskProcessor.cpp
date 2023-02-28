@@ -29,7 +29,7 @@ void detail::TaskProcessor::stop()
     get_ios().stop();
 }
 
-server::ConnectionDataPtr detail::TaskProcessor::create_connection(std::string address, unsigned short port_num)
+server::ConnectionDataPtr detail::TaskProcessor::create_connection(const std::string& address, const unsigned short port_num)
 {
     server::ConnectionDataPtr connect = std::make_unique<server::ConnectionData>(get_ios());
     connect->socket.connect(io__::ip::tcp::endpoint(io__::ip::address_v4::from_string(address), port_num));

@@ -2,6 +2,8 @@
 #include <string>
 #include <iostream>
 #include <memory>
+#include <locale>
+#include <functional>
 
 #define BOOST_ASIO_DISABLE_HANDLER_TYPE_REQUIREMENTS
 
