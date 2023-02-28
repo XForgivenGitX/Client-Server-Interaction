@@ -14,7 +14,7 @@ set (SERVER_SOURCES
   "server/Src/main.cpp"  
 ) 
 #####
-set (BOOST_ROOT "D:/SOFT/boost_1_81_0/boost/")
+set (BOOST_ROOT "C:/Users/User/source/boost_1_81_0/")
 set (Boost_USE_STATIC_LIBS ON)
 set (Boost_USE_MULTITHREADED ON)
 set (BOOST_COMPONENTS thread system)
@@ -25,7 +25,7 @@ if (WIN32)
   add_definitions(-D _WIN32_WINNT=0x0601)
 endif()
 #####
-find_package(Boost 1.81.0 COMPONENTS ${BOOST_COMPONENTS} REQUIRED)
+find_package(Boost 1.81.0 COMPONENTS system thread REQUIRED)
 include_directories(${Boost_INCLUDE_DIR})
 include_directories(${INCLUDES})
 #####

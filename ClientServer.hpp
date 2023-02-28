@@ -3,7 +3,11 @@
 #include <iostream>
 #include <memory>
 #include <locale>
+<<<<<<< HEAD
 #include <functional>
+=======
+
+>>>>>>> 7345dcb09b30e5c0a5026aa8c293c801325703b5
 
 #define BOOST_ASIO_DISABLE_HANDLER_TYPE_REQUIREMENTS
 
