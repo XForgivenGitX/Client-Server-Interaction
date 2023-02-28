@@ -13,9 +13,9 @@ namespace server
 	};
 	typedef std::unique_ptr<ConnectionData> ConnectionDataPtr;
 
-	void async_write_data(ConnectionDataPtr&& dataPtr);
+	void async_write_data(ConnectionDataPtr &&dataPtr);
 	void on_send(ConnectionDataPtr&& dataPtr, const boost::system::error_code& error);
-	void send();
+	void send(std::string& data);
 }
 
 

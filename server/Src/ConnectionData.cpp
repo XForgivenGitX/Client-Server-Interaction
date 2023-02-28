@@ -13,23 +13,23 @@ void server::ConnectionData::shutdown()
 }
 server::ConnectionData::~ConnectionData() { shutdown(); }
 
-//TODO  
+
 void server::async_write_data(ConnectionDataPtr &&dataPtr)
 {
-    auto& [socket, data] = *dataPtr;
-    io__::io_service::strand _strand{detail::TaskProcessor::get_ios()};
-
-    //io__::async_write(socket, io__::buffer(data), );
-    //io__::async_write(socket, io__::buffer(data), task::TaskWrappedWithConnections<Func>(std::move(dataPtr), func));
+    auto &[socket, data] = *dataPtr;
+    io__::async_write(socket, io__::buffer(data), 
+    [](const boost::system::error_code &error, std::size_t bytes_count) {});
 }
 
 void server::on_send(ConnectionDataPtr &&dataPtr, const boost::system::error_code &error)
 {
 }
 
-void server::send()
+void server::send(std::string& data)
 {
-    ConnectionDataPtr socket = detail::TaskProcessor::create_connection("94.29.6.202", 9001);
-    socket->data = "PRIYOM";
+    ConnectionDataPtr socket;
+    try{ socket = detail::TaskProcessor::create_connection("127.0.0.1", 9001);}
+    catch(std::exception& ex){std::cout << ex.what() <<'\n';}
+    socket->data = data;
     async_write_data(std::move(socket));
 }
