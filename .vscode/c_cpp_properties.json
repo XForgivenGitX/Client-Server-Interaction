@@ -4,7 +4,7 @@
             "name": "Win32",
             "includePath": [
                 "${workspaceFolder}/**",
-                "D:/SOFT/boost_1_81_0/boost/",
+                "C:/Users/User/source/boost_1_81_0/boost_1_81_0/",
                 "./common/Inc/"
             ],
             "defines": [
@@ -22,9 +22,8 @@
             {
                 "path": 
                 [
-                    "D:/SOFT/boost_1_81_0/boost/"
+                    "C:/Users/User/source/boost_1_81_0/boost_1_81_0/"
                 ]
-            
             }
         }
     ],

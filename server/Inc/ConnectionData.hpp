@@ -12,13 +12,8 @@ namespace server
 		~ConnectionData();
 	};
 	typedef std::unique_ptr<ConnectionData> ConnectionDataPtr;
-
-
-	template <typename Func>
-	void async_write_data(ConnectionDataPtr&& dataPtr, const Func& func);
 	
-	void send(const std::string& address, const unsigned short port, const std::string& data);	
-	void on_send(const boost::system::error_code& error, std::size_t bytes_transferred);
+	void handler_server_send(ConnectionDataPtr&& dataPtr, const boost::system::error_code& error);
 }
 
 
