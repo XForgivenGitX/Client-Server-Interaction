@@ -49,7 +49,7 @@ void detail::TaskProcessor::async_write_data(server::ConnectionDataPtr &&dataPtr
 }
 
 template <typename Func>
-void detail::TaskProcessor::send(const std::string& address, const unsigned short port, const std::string& data, const Func& func);	
+void detail::TaskProcessor::send(const std::string& address, const unsigned short port, const std::string& data, const Func& func)
 {
     server::ConnectionDataPtr socket;
     try
