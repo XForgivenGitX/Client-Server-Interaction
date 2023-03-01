@@ -12,10 +12,8 @@ void server::ConnectionData::shutdown()
 }
 server::ConnectionData::~ConnectionData() { shutdown(); }
 
-void server::handler_server_send(ConnectionDataPtr&& dataPtr, const boost::system::error_code &error)
+void server::handler_server_send(SocketDataPtr&& dataPtr, std::size_t bytes_transferred)
 {
-    if (error)
-    {
-        std::cerr << error.message() << std::endl;
-    }
+    std::cout << bytes_transferred << std::endl;
+    detail::TaskProcessor::get_ios().stop();
 }

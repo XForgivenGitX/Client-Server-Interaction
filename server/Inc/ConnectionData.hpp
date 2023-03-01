@@ -11,9 +11,9 @@ namespace server
 		void shutdown();
 		~ConnectionData();
 	};
-	typedef std::unique_ptr<ConnectionData> ConnectionDataPtr;
+	typedef std::unique_ptr<ConnectionData> SocketDataPtr;
 	
-	void handler_server_send(ConnectionDataPtr&& dataPtr, const boost::system::error_code& error);
+	void handler_server_send(server::SocketDataPtr&&,  std::size_t);
 }
 
 

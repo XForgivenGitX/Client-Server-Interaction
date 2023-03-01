@@ -1,12 +1,13 @@
 #include "ClientServer.hpp"
 
-template <typename T>
-task::TaskWrapped<T>::TaskWrapped(const T &func) : taskUnwrapped_(func)
-{
-}
+template <typename Func>
+task::TaskWrapped<Func>::TaskWrapped(std::function<Func> &taskUnwrapped)
+    : taskUnwrapped_(taskUnwrapped.target()) {}
 
-template <typename T>
-void task::TaskWrapped<T>::operator()() const
+
+template <typename Func>
+template <typename... Args>
+void task::TaskWrapped<Func>::operator()(Args &&...args)
 {
     try
     {
@@ -14,41 +15,23 @@ void task::TaskWrapped<T>::operator()() const
     }
     catch (const boost::thread_interrupted &)
     {
-        std::cerr << "THREAD INTERRUPTION\n";
+        std::cerr << "thread interruption" << std::endl;
     }
     try
     {
-        taskUnwrapped_();
+        taskUnwrapped_(std::forward(args)...);
     }
     catch (const std::exception &ex)
     {
-        std::cerr << "EXCEPTION: " << ex.what << '\n';
+        std::cerr << ex.what << std::endl;
     }
     catch (const boost::thread_interrupted &)
     {
-        std::cerr << "THREAD INTERRUPTION\n";
+        std::cerr << "thread interruption" << std::endl;
     }
     catch (...)
     {
-        std::cerr << "UNKNOWN ERROR\n";
+        std::cerr << "unknown error when calling the function:\n"
+                  << boost::typeindex::type_id_with_cvr<Func>() << std::endl;
     }
-}
-
-template <typename Func>
-task::TaskWrapped<Func> task::make_task_wrapped(const Func &f)
-{
-    return task::TaskWrapped<Func>(f);
-}
-
-template <typename T>
-task::TaskWrappedWithConnections<T>::TaskWrappedWithConnections(server::ConnectionDataPtr &&data, T &taskUnwrapped)
-    : data_(std::move(data)), taskUnwrapped_(taskUnwrapped)
-{
-}
-
-template <typename T>
-void task::TaskWrappedWithConnections<T>::operator()(const boost::system::error_code &error, std::size_t bytes_transferred)
-{
-    data_->data.resize(bytes_transferred);
-    taskUnwrapped_(error, std::move(data_));
 }

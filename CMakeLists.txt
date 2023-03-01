@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.0)
 #####
 set (PROJECT ClientServerInteraction)
 set (CMAKE_CXX_STANDARD 20) 
+set (EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
 set (INCLUDES
   "./common/Inc"
   "./server/Inc"
@@ -12,9 +13,10 @@ set (SERVER_SOURCES
   "common/Src/TaskProcessor.cpp"
   "common/Src/TaskWrapped.cpp"
   "server/Src/main.cpp"  
+  "common/Src/SendReceive.cpp"
 ) 
 #####
-set (BOOST_ROOT "C:/Users/User/source/boost_1_81_0/boost_1_81_0/")
+set (BOOST_ROOT "/SOFT/boost_1_81_0/boost/")
 set (Boost_USE_STATIC_LIBS ON)
 set (Boost_USE_MULTITHREADED ON)
 set (BOOST_COMPONENTS thread system)
@@ -25,6 +27,7 @@ if (WIN32)
   add_definitions(-D _WIN32_WINNT=0x0601)
 endif()
 #####
+find_library(BOOST_ROOT Boost)
 find_package(Boost 1.81.0 COMPONENTS system thread REQUIRED)
 include_directories(${Boost_INCLUDE_DIR})
 include_directories(${INCLUDES})

@@ -113,7 +113,8 @@
         "execution": "cpp",
         "filesystem": "cpp",
         "queue": "cpp",
-        "stack": "cpp"
+        "stack": "cpp",
+        "cassert": "cpp"
     },
     "editor.insertSpaces": true,
     "C_Cpp.errorSquiggles": "enabled",

@@ -4,7 +4,7 @@
             "name": "Win32",
             "includePath": [
                 "${workspaceFolder}/**",
-                "C:/Users/User/source/boost_1_81_0/boost_1_81_0/",
+                "/SOFT/boost_1_81_0/boost/",
                 "./common/Inc/"
             ],
             "defines": [
@@ -15,14 +15,14 @@
             "windowsSdkVersion": "10.0.22000.0",
             "compilerPath": "cl.exe",
             "cStandard": "c17",
-            "cppStandard": "c++17",
+            "cppStandard": "c++20",
             "intelliSenseMode": "windows-msvc-x64",
             "configurationProvider": "ms-vscode.cmake-tools",
             "browse": 
             {
                 "path": 
                 [
-                    "C:/Users/User/source/boost_1_81_0/boost_1_81_0/"
+                    "/SOFT/boost_1_81_0/boost/"
                 ]
             }
         }
