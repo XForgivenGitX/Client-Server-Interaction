@@ -1,11 +1,16 @@
 #pragma once
 #include <ClientServer.hpp>
 
+// TODO
+//1. wrap try-catch start and stop
+//2. 
+
 namespace detail
 {
     struct TaskProcessor
     {
-    public:
+    //private:
+    public:   
         static io__::io_service &get_ios();
         TaskProcessor() = delete;
     
@@ -14,7 +19,4 @@ namespace detail
         static void start();
         static void stop();
     };
-
-
-
 }

@@ -4,8 +4,12 @@
             "name": "Win32",
             "includePath": [
                 "${workspaceFolder}/**",
-                "/SOFT/boost_1_81_0/boost/",
-                "./common/Inc/"
+                "/SOFT/boost_1_81_0/boost/include/boost-1_81/",
+                "network_lib/network_io/Inc/",
+                "network_lib/tasks/Inc/",
+                "server/Inc",
+                "client/Inc",
+                "./"
             ],
             "defines": [
                 "_DEBUG",
@@ -22,7 +26,7 @@
             {
                 "path": 
                 [
-                    "/SOFT/boost_1_81_0/boost/"
+                    "/SOFT/boost_1_81_0/boost/include/boost-1_81/"
                 ]
             }
         }
