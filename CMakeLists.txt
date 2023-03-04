@@ -33,7 +33,7 @@ set (CLIENT_SOURCES
   ) 
 
 #####
-set (BOOSTROOT "/SOFT/boost_1_81_0/boost")
+#set (BOOSTROOT "/SOFT/boost_1_81_0/boost")
 if(BUILD_SHARED_LIBS)
     add_definitions(-DBOOST_ALL_DYN_LINK)  
 else()  
@@ -50,7 +50,7 @@ if (WIN32)
 endif()
 #####
 #find_library(BOOST_ROOT Boost)
-find_package(Boost 1.81.0 REQUIRED)
+find_package(Boost COMPONENTS thread system REQUIRED)
 include_directories(${Boost_INCLUDE_DIRS})
 include_directories(${INCLUDES})
 #####
@@ -59,8 +59,10 @@ add_executable (client ${CLIENT_SOURCES} ${MY_LIB})
 #####
 #target_link_libraries (server ${Boost_LIBRARIES})
 target_link_libraries (client ${Boost_LIBRARIES})
-target_compile_features(
-client
-PRIVATE
-cxx_auto_type
-cxx_range_for)
+target_link_libraries (client wsock32.a ws2_32.a)
+# target_compile_features(
+# client
+# PRIVATE
+# cxx_auto_type
+# cxx_range_for)
+# https://translated.turbopages.org/proxy_u/en-ru.ru.1536f157-64031203-0a61f793-74722d776562/https/code.visualstudio.com/docs/cpp/config-mingw
