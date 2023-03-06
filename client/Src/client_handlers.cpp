@@ -3,7 +3,7 @@
 void client::send_handler(anet::socket_data_ptr&& socketData, const boost::system::error_code& error)
 {
     std::cout << "Server received: " << socketData->data_ << std::endl;
-    anet::send_receive::receive(std::move(socketData), 8, std::function(client::receive_handler));
+    anet::send_receive::receive(std::move(socketData), std::function(client::receive_handler), 8, 2);
 }
 
 void client::receive_handler(anet::socket_data_ptr&& socketData, const boost::system::error_code& error)

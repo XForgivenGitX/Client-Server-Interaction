@@ -14,7 +14,7 @@ namespace anet
     
     public:
         static void send(socket_data_ptr &&socketData, callback_func_t &&handler);
-        static void receive(socket_data_ptr &&socketData, std::size_t atLeastBytes, callback_func_t &&handler);
+        static void receive(socket_data_ptr &&socketData, callback_func_t &&handler, std::size_t atMostBytes, std::size_t atLeastBytes);
 
     private:
         struct callback_function_wrapper

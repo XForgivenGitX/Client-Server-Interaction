@@ -7,12 +7,12 @@ void anet::send_receive::send(anet::socket_data_ptr &&socketData, callback_func_
     io__::async_write(socket, io__::buffer(data), callback_function_wrapper(std::move(socketData), std::move(handler)));
 }
 
-void anet::send_receive::receive(anet::socket_data_ptr &&socketData, std::size_t atLeastBytes, callback_func_t &&handler)
+void anet::send_receive::receive(anet::socket_data_ptr &&socketData, callback_func_t &&handler, std::size_t atMostBytes, std::size_t atLeastBytes)
 {
     if(!socketData->socket_.is_open()) throw utility::bad_socket{};
-    socketData->data_.resize(atLeastBytes);
+    socketData->data_.resize(atMostBytes);
     auto &[socket, data] = *socketData;
-    io__::async_read(socket, io__::buffer(data), io__::transfer_at_least(2), callback_function_wrapper(std::move(socketData), std::move(handler)));
+    io__::async_read(socket, io__::buffer(data), io__::transfer_at_least(atLeastBytes), callback_function_wrapper(std::move(socketData), std::move(handler)));
 }
 
 anet::send_receive::callback_function_wrapper::callback_function_wrapper

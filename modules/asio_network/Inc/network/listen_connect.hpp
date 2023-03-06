@@ -38,6 +38,7 @@ namespace anet
     private:
         struct callback_function_wrapper
         {
+        public:   
             tcp_listener_ptr listener_;
             callback_func_t functionUnwrapped_;
 

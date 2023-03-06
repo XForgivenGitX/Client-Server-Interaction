@@ -8,6 +8,26 @@
 #include <boost/type_index.hpp>
 #include <boost/thread/thread.hpp>
 
+namespace utility::detail
+{
+    struct dummy{};
+
+    template <class T>
+    struct my_result
+    {
+        using type = std::optional<T>;
+    };
+
+    template <>
+    struct my_result<void>
+    {
+        using type = std::optional<dummy>;
+    };
+
+    template <class T>
+    using my_result_t = my_result<T>::type;
+}
+
 namespace utility
 {
     struct bad_socket : public std::exception
@@ -47,26 +67,8 @@ namespace utility
         return nullptr;
     }
 
-    namespace detail
-    {
-        struct dummy{};
-
-        template <class T>
-        struct my_result
-        {
-            using type = std::optional<T>;
-        };
-
-        template <>
-        struct my_result<void>
-        {
-            using type = std::optional<dummy>;
-        };
-
-        template <class T>
-        using my_result_t = my_result<T>::type;
-    }
-
+//_____
+    
     template <class Func, class Res = typename boost::function_types::result_type<Func>::type>
     struct task_wrapped
     {

@@ -7,6 +7,7 @@
 /////////////////////////////////////
 #define BOOST_ASIO_DISABLE_HANDLER_TYPE_REQUIREMENTS
 #define BOOST_ASIO_NO_DEPRECATED
+#define BOOST_ASIO_ENABLE_HANDLER_TRACKING
 
 /////////////////////////////////////
 #include <boost/system/error_code.hpp>

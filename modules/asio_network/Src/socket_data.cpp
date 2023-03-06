@@ -3,6 +3,7 @@
 anet::socket_data::socket_data(io__::io_context &ios) : socket_(ios)
 {
 }
+
 void anet::socket_data::shutdown() noexcept
 {
     if (!socket_.is_open())
@@ -20,8 +21,8 @@ void anet::socket_data::shutdown() noexcept
 #endif // DEBUG__
     }
 }
-anet::socket_data::~socket_data() { shutdown(); }
 
+anet::socket_data::~socket_data() { shutdown(); }
 
 boost::system::error_code anet::socket_data_endpoint::connect() const noexcept
 {
