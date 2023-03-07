@@ -79,6 +79,7 @@
         "typeindex": "cpp",
         "typeinfo": "cpp",
         "variant": "cpp",
-        "coroutine": "cpp"
+        "coroutine": "cpp",
+        "regex": "cpp"
     }
 }

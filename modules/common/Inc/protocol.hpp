@@ -1,6 +1,8 @@
 #pragma once
 #include <vector>
 #include <string>
+#include <regex>
+#include <iostream>
 
 namespace common
 {
@@ -15,23 +17,33 @@ namespace common
     enum class command : unsigned
     {
         CONNECT_REQUEST,
-        CONNECT_STATUS,
+        SEND_REQUEST,
         AUTHORIZ_REQUEST,
-        AUTHORIZ_STATUS,
-        SEND_MESSAGE,
-        SEND_STATUS,
         DISCONNECT_REQUEST,
+
+        CONNECT_STATUS,
+        AUTHORIZ_STATUS,
+        SEND_STATUS,
         DISCONNECT_STATUS
     };
-    
+
     struct splited_frame
     {
-        command cmd;
-        std::vector<std::string> args;
-    };
-    
-    splited_frame split_frame(std::string&& frame)
-    {
+        typedef std::vector<std::string> args_t;
 
-    }
+    public:
+        command cmd;
+        args_t args;
+
+    public:
+        splited_frame(std::string &&frame)
+        {
+            const std::regex reg("(\\[)(\\$)([0-9])(\\$)(({)[(\\w)]+(}))+(\\])");
+            std::cmatch tokens;
+            if (std::regex_match(frame.c_str(), tokens, reg))
+                for (int i = 0; i < tokens.size(); ++i)
+                    std::cout << tokens[i] << std::endl;//для отладки
+        }
+    };
+
 }
