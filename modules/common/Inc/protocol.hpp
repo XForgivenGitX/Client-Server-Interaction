@@ -1,8 +1,10 @@
 #pragma once
+
 #include <vector>
 #include <string>
 #include <regex>
-#include <iostream>
+#include <optional>
+#include <algorithm>
 
 namespace common
 {
@@ -11,19 +13,24 @@ namespace common
         MESSAGE_LOW_LEVEL = 1,
         MESSAGE_HIGH_LEVEL = 50,
         NAME_LOW_LEVEL = 5,
-        NAME_HIGH_LEVEL = 20
+        NAME_HIGH_LEVEL = 20,
+        COMMAND_INDEX = 1,
+        ARGUMENT_INDEX = 2
+        //...
     };
 
     enum class command : unsigned
     {
+        REPEAT_REQUEST,
         CONNECT_REQUEST,
         SEND_REQUEST,
         AUTHORIZ_REQUEST,
         DISCONNECT_REQUEST,
 
+        REPEAT_STATUS,
         CONNECT_STATUS,
-        AUTHORIZ_STATUS,
         SEND_STATUS,
+        AUTHORIZ_STATUS,
         DISCONNECT_STATUS
     };
 
@@ -32,18 +39,9 @@ namespace common
         typedef std::vector<std::string> args_t;
 
     public:
-        command cmd;
-        args_t args;
-
-    public:
-        splited_frame(std::string &&frame)
-        {
-            const std::regex reg("(\\[)(\\$)([0-9])(\\$)(({)[(\\w)]+(}))+(\\])");
-            std::cmatch tokens;
-            if (std::regex_match(frame.c_str(), tokens, reg))
-                for (int i = 0; i < tokens.size(); ++i)
-                    std::cout << tokens[i] << std::endl;//для отладки
-        }
+        command cmd_;
+        args_t args_;
     };
-
+    
+    std::optional<splited_frame> split_frame(const std::string &frame);
 }

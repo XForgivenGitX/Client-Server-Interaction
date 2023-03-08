@@ -40,7 +40,7 @@ namespace utility
     };
 
 //_____
-
+    
     template <class T, class... Args>
     std::unique_ptr<T> safe_make_unique(Args &&...args) noexcept
     {
@@ -90,7 +90,7 @@ namespace utility
             }
             catch (const boost::thread_interrupted &)
             {
-                std::cerr << "thread interruption" << std::endl;
+                std::cerr << "thread interruption" << '\n';
             }
             try
             {
@@ -106,16 +106,16 @@ namespace utility
             }
             catch (const std::exception &ex)
             {
-                std::cerr << ex.what() << std::endl;
+                std::cerr << ex.what() << '\n';
             }
             catch (const boost::thread_interrupted &)
             {
-                std::cerr << "thread interruption" << std::endl;
+                std::cerr << "thread interruption" << '\n';
             }
             catch (...)
             {
                 std::cerr << "unknown error when calling the function: "
-                          << boost::typeindex::type_id<Func>() << std::endl;
+                          << boost::typeindex::type_id<Func>() << '\n';
             }
             return std::nullopt;
         }
