@@ -83,6 +83,8 @@ public:
     };
 
 public:
+    
+    //TODO при подключении клиента сокет прослушивания закрывается и затем сразу открывается
     inline static void start(unsigned short port)
     {
         anet::end_point_wrapper endPoint(port, io__::ip::tcp::v4());

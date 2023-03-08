@@ -22,7 +22,9 @@ void anet::socket_data::shutdown() noexcept
     }
 }
 
-anet::socket_data::~socket_data() { shutdown(); }
+anet::socket_data::~socket_data() { 
+    //shutdown(); 
+    }
 
 boost::system::error_code anet::socket_data_endpoint::connect() const noexcept
 {
