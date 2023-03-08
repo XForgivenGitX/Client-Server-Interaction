@@ -12,27 +12,18 @@ namespace utility::detail
 {
     struct dummy{};
 
-    template <class T>
-    struct my_result
+    template <typename Res>
+    std::optional<Res> operator,(Res&& res, std::optional<dummy>) 
     {
-        using type = std::optional<T>;
-    };
-
-    template <>
-    struct my_result<void>
-    {
-        using type = std::optional<dummy>;
-    };
-
-    template <class T>
-    using my_result_t = my_result<T>::type;
+        return std::forward<Res>(res);
+    }
 }
 
 namespace utility
 {
     struct bad_socket : public std::exception
     {
-        virtual const char *what() noexcept
+        virtual const char *what() const noexcept
         {
             return "socket is closed, read write is not possible";
         }
@@ -69,7 +60,7 @@ namespace utility
 
 //_____
     
-    template <class Func, class Res = typename boost::function_types::result_type<Func>::type>
+    template <class Func>
     struct task_wrapped
     {
         const std::function<Func> taskUnwrapped_;
@@ -82,8 +73,9 @@ namespace utility
         }
 
         template <typename... Args>
-        detail::my_result_t<Res> operator()(Args &&...args) const noexcept
+        auto operator()(Args &&...args) const noexcept
         {
+            using Ret = decltype(taskUnwrapped_(std::forward<Args>(args)...), std::optional<detail::dummy>());
             try
             {
                 boost::this_thread::interruption_point();
@@ -94,15 +86,7 @@ namespace utility
             }
             try
             {
-                if constexpr (std::is_void_v<Res>)
-                {
-                    taskUnwrapped_(std::forward<Args>(args)...);
-                    return detail::dummy{};
-                }
-                else
-                {
-                    return taskUnwrapped_(std::forward<Args>(args)...);
-                }
+                return taskUnwrapped_(std::forward<Args>(args)...), std::optional<detail::dummy>();
             }
             catch (const std::exception &ex)
             {
@@ -117,7 +101,7 @@ namespace utility
                 std::cerr << "unknown error when calling the function: "
                           << boost::typeindex::type_id<Func>() << '\n';
             }
-            return std::nullopt;
+            return Ret();
         }
     };
 

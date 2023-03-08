@@ -1,16 +1,7 @@
 #include <server_handlers.hpp>
 
-// void server::send_handler(anet::socket_data_ptr&& socketData, const boost::system::error_code& error)
-// {
-   
-// }
-
-// void server::receive_handler(anet::socket_data_ptr&& socketData, const boost::system::error_code& error)
-// {
-    
-// }
-
-// void server::handler_accepted_connection(anet::tcp_listener_ptr&& listener, const boost::system::error_code& error)
-// {
-    
-// }
+std::unordered_map<server::connectedUser::id_type, server::connectedUser> server::connectedUsers;
+server::connectedUser::id_type server::id_counter;
+io__::io_context server::ios;
+boost::thread_group server::tg;
+std::mutex server::mut;
