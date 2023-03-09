@@ -53,8 +53,9 @@ public:
     {
         static void send_handler(anet::socket_data_ptr &&socketData, const boost::system::error_code &error)
         {
-            
-            anet::send_receive::receive(std::move(socketData), std::function(receive2_handler), FRAME_MAX_LENGHT, FRAME_MIN_LENGHT);
+            std::cout << "enter command\n>";
+            std::cin >> socketData->data_;
+            anet::send_receive::send(std::move(socketData), std::function(send_handler));
         }
         
         static void receive_handler(anet::socket_data_ptr &&socketData, const boost::system::error_code &error)
@@ -62,12 +63,7 @@ public:
             mut.unlock();
             anet::send_receive::send(std::move(socketData), std::function(send_handler));
         }
-        
-        static void receive2_handler(anet::socket_data_ptr &&socketData, const boost::system::error_code &error)
-        {
-            anet::send_receive::send(std::move(socketData), std::function(send_handler));
-        }
-        
+       
         static void accepted_connection(anet::tcp_listener_ptr &&listener, const boost::system::error_code &error)
         {
             
