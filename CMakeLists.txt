@@ -16,3 +16,4 @@ add_subdirectory(client)
 # https://stackoverflow.com/questions/14265581/parse-split-a-string-in-c-using-string-delimiter-standard-c
 # https://habr.com/ru/post/649363/
 # https://docs.github.com/ru/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax
+# https://github.com/botaojia/chat/blob/master/chat_client.cpp

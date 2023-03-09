@@ -15,5 +15,5 @@ void client::receive_handler(anet::socket_data_ptr&& socketData, const boost::sy
 
 void client::connection_handler(anet::socket_data_endpoint_ptr &&socketData, const boost::system::error_code &)
 {
-   
+   anet::send_receive::receive(std::move(socketData->socketData_), std::function(client::receive_handler), 50, 2);
 }
