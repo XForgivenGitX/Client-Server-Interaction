@@ -81,10 +81,10 @@ namespace server
         
         static void authorization_handler(anet::socket_data_ptr socketData, const boost::system::error_code &error)
         {
-            decltype(auto) this_ = get_instanse();
+            auto& this_ = get_instanse();
             this_.connectedUsers_.insert(socketData);
             this_.names_[socketData] = socketData->data_;
-            
+
         }
     };
 }
