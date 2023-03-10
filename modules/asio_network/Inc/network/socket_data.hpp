@@ -16,7 +16,7 @@ namespace anet
     public: 
         void shutdown() noexcept; 
     };
-    typedef std::unique_ptr<socket_data> socket_data_ptr;
+    typedef std::shared_ptr<socket_data> socket_data_ptr;
 
 //_____
     
@@ -29,6 +29,7 @@ namespace anet
     public:    
         end_point_wrapper(unsigned short port, const std::string& address);
         end_point_wrapper(unsigned short port, const io__::ip::tcp& address);
+        end_point_wrapper(){}
     };
     
 //_____
@@ -40,7 +41,7 @@ namespace anet
         end_point_wrapper endPoint_;
 
     public:
-        explicit socket_data_endpoint(socket_data_ptr&& socketData, end_point_wrapper&& endPoint);
+        explicit socket_data_endpoint(socket_data_ptr socketData, end_point_wrapper&& endPoint);
     
     public:
         boost::system::error_code connect() const noexcept;

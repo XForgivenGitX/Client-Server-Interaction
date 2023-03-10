@@ -22,9 +22,7 @@ void anet::socket_data::shutdown() noexcept
     }
 }
 
-anet::socket_data::~socket_data() { 
-    //shutdown(); 
-    }
+anet::socket_data::~socket_data() { shutdown(); }
 
 boost::system::error_code anet::socket_data_endpoint::connect() const noexcept
 {
@@ -35,20 +33,20 @@ boost::system::error_code anet::socket_data_endpoint::connect() const noexcept
     return error;
 }
 
-anet::socket_data_endpoint::socket_data_endpoint(socket_data_ptr &&socketData, end_point_wrapper &&endPoint)
-    : socketData_(std::move(socketData)), endPoint_(std::move(endPoint))
+anet::socket_data_endpoint::socket_data_endpoint(socket_data_ptr socketData, end_point_wrapper &&endPoint)
+    : socketData_(socketData), endPoint_(std::move(endPoint))
 {
 }
 
 anet::socket_data_endpoint_ptr anet::make_socket_data(io__::io_context &ios, end_point_wrapper &&endPoint)
 {
     return utility::safe_make_unique<socket_data_endpoint>
-        (utility::safe_make_unique<socket_data>(ios), std::move(endPoint));
+        (utility::safe_make_shared<socket_data>(ios), std::move(endPoint));
 }
 
 anet::socket_data_ptr anet::make_socket_data(io__::io_context &ios)
 {
-    return utility::safe_make_unique<socket_data>(ios);
+    return utility::safe_make_shared<socket_data>(ios);
 }
 
 anet::end_point_wrapper::end_point_wrapper(unsigned short port, const std::string &address)

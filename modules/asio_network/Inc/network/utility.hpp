@@ -10,10 +10,12 @@
 
 namespace utility::detail
 {
-    struct dummy{};
+    struct dummy
+    {
+    };
 
     template <typename Res>
-    std::optional<Res> operator,(Res&& res, std::optional<dummy>) 
+    std::optional<Res> operator,(Res &&res, std::optional<dummy>)
     {
         return std::forward<Res>(res);
     }
@@ -30,8 +32,8 @@ namespace utility
         virtual ~bad_socket() = default;
     };
 
-//_____
-    
+    //_____
+
     template <class T, class... Args>
     std::unique_ptr<T> safe_make_unique(Args &&...args) noexcept
     {
@@ -57,9 +59,35 @@ namespace utility
         }
         return nullptr;
     }
-
-//_____
     
+    
+    template <class T, class... Args>
+    std::shared_ptr<T> safe_make_shared(Args &&...args) noexcept
+    {
+        try
+        {
+            return std::make_shared<T>(std::forward<Args>(args)...);
+        }
+        catch (const std::bad_alloc &ex)
+        {
+            std::cerr << ex.what() << '\n';
+#ifdef DEBUG__
+            assert(false);
+#endif // DEBUG__
+        }
+        catch (const std::exception &ex)
+        {
+            std::cerr << ex.what() << '\n';
+        }
+        catch (...)
+        {
+            std::cerr << "unknown error when allocating memory for the type:"
+                      << boost::typeindex::type_id<T>();
+        }
+        return nullptr;
+    }
+    //_____
+
     template <class Func>
     struct task_wrapped
     {
@@ -86,7 +114,7 @@ namespace utility
             }
             try
             {
-                return taskUnwrapped_(std::forward<Args>(args)...), std::optional<detail::dummy>();
+                return taskUnwrapped_(std::forward<Args>(args)...), std::optional<detail::dummy>(detail::dummy{});
             }
             catch (const std::exception &ex)
             {
@@ -104,16 +132,4 @@ namespace utility
             return Ret();
         }
     };
-
-    template <typename Func>
-    task_wrapped<Func> make_task_wrapped(std::function<Func> &&func)
-    {
-        return task_wrapped(std::move(func));
-    }
-
-    template <typename Func>
-    task_wrapped<Func> make_task_wrapped(std::function<Func> &func)
-    {
-        return task_wrapped(func);
-    }
 }

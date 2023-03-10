@@ -80,6 +80,7 @@
         "typeinfo": "cpp",
         "variant": "cpp",
         "coroutine": "cpp",
-        "regex": "cpp"
+        "regex": "cpp",
+        "unordered_set": "cpp"
     }
 }
