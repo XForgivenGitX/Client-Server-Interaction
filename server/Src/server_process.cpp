@@ -2,13 +2,16 @@
 
 int main(int argc, char** argv) 
 { 
-    if(argc != 3) 
+    if(argc < 2) 
     {
-        std::cerr << "Incorrect arguments. Usage: <port> <clients_num>\n";
+        std::cerr << "Incorrect arguments. Usage: <ports...> \n";
         return 1;
     }
-    server::server_session::get_instanse().start(std::atoi(argv[1]), std::atoi(argv[2]));
-    server::server_session::get_instanse().ios_.run();
+    io__::io_context ios;
+    io__::executor_work_guard worker = io__::make_work_guard(ios);
+    server::server_session server(ios, std::atoi(argv[1]));
+    server.start();
+    ios.run();
 }
 
 
