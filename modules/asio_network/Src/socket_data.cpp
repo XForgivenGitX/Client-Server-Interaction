@@ -16,9 +16,9 @@ void anet::socket_data::shutdown() noexcept
     catch (const boost::system::system_error &e)
     {
         std::cerr << e.what() << '\n';
-#ifdef DEBUG__
+#ifdef NETWORK_MODULE_RELEASE
         assert(false);
-#endif // DEBUG__
+#endif
     }
 }
 
@@ -33,15 +33,15 @@ boost::system::error_code anet::socket_data_endpoint::connect() const noexcept
     return error;
 }
 
-anet::socket_data_endpoint::socket_data_endpoint(socket_data_ptr socketData, end_point_wrapper &&endPoint)
+anet::socket_data_endpoint::socket_data_endpoint(socket_data_ptr socketData, end_point_wrapper &endPoint)
     : socketData_(socketData), endPoint_(std::move(endPoint))
 {
 }
 
-anet::socket_data_endpoint_ptr anet::make_socket_data(io__::io_context &ios, end_point_wrapper &&endPoint)
+anet::socket_data_endpoint_ptr anet::make_socket_data(io__::io_context &ios, end_point_wrapper &endPoint)
 {
     return utility::safe_make_unique<socket_data_endpoint>
-        (utility::safe_make_shared<socket_data>(ios), std::move(endPoint));
+        (utility::safe_make_shared<socket_data>(ios), endPoint);
 }
 
 anet::socket_data_ptr anet::make_socket_data(io__::io_context &ios)

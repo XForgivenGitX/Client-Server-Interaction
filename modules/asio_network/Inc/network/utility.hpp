@@ -10,14 +10,54 @@
 
 namespace utility::detail
 {
-    struct dummy
-    {
-    };
+    struct dummy{};
 
     template <typename Res>
     std::optional<Res> operator,(Res &&res, std::optional<dummy>)
     {
         return std::forward<Res>(res);
+    }
+
+    template <typename F>
+    struct remove_function_top_const;
+
+    template <typename R, typename... Args>
+    struct remove_function_top_const<R(Args...)>
+    {
+        using type = R(Args...);
+    };
+
+    template <typename R, typename... Args>
+    struct remove_function_top_const<R(Args...) const>
+    {
+        using type = R(Args...);
+    };
+ 
+    template <class F, class Obj, class... Args>
+    struct call_from_object
+    {
+        F(Obj::*fptr_);
+        Obj *caller_;
+
+    public:
+        call_from_object(F(Obj::*fptr), Obj *caller)
+            : fptr_(fptr), caller_(caller) {}
+        auto operator()(Args... args)
+        {
+            return (caller_->*fptr_)(std::forward<Args>(args)...);
+        }
+    };
+    
+    template <class T, class... Args>
+    constexpr std::unique_ptr<T> safe_make_unique_impl(Args &&...args)
+    {
+        return std::make_unique<T>(std::forward<Args>(args)...);
+    }
+    
+    template <class T, class... Args>
+    constexpr std::shared_ptr<T> safe_make_shared_impl(Args &&...args)
+    {
+        return std::make_shared<T>(std::forward<Args>(args)...);
     }
 }
 
@@ -32,78 +72,44 @@ namespace utility
         virtual ~bad_socket() = default;
     };
 
-    //_____
-
-    template <class T, class... Args>
-    std::unique_ptr<T> safe_make_unique(Args &&...args) noexcept
-    {
-        try
-        {
-            return std::make_unique<T>(std::forward<Args>(args)...);
-        }
-        catch (const std::bad_alloc &ex)
-        {
-            std::cerr << ex.what() << '\n';
-#ifdef DEBUG__
-            assert(false);
-#endif // DEBUG__
-        }
-        catch (const std::exception &ex)
-        {
-            std::cerr << ex.what() << '\n';
-        }
-        catch (...)
-        {
-            std::cerr << "unknown error when allocating memory for the type:"
-                      << boost::typeindex::type_id<T>();
-        }
-        return nullptr;
-    }
-    
-    
-    template <class T, class... Args>
-    std::shared_ptr<T> safe_make_shared(Args &&...args) noexcept
-    {
-        try
-        {
-            return std::make_shared<T>(std::forward<Args>(args)...);
-        }
-        catch (const std::bad_alloc &ex)
-        {
-            std::cerr << ex.what() << '\n';
-#ifdef DEBUG__
-            assert(false);
-#endif // DEBUG__
-        }
-        catch (const std::exception &ex)
-        {
-            std::cerr << ex.what() << '\n';
-        }
-        catch (...)
-        {
-            std::cerr << "unknown error when allocating memory for the type:"
-                      << boost::typeindex::type_id<T>();
-        }
-        return nullptr;
-    }
-    //_____
-
     template <class Func>
-    struct task_wrapped
+    struct task_wrapped;
+
+    template <class R, class... Args>
+    struct task_wrapped<R(Args...)>
     {
-        const std::function<Func> taskUnwrapped_;
+        using Func = R(Args...);
 
-        explicit task_wrapped(std::function<Func> &taskUnwrapped) : taskUnwrapped_(taskUnwrapped)
+    public:
+        const std::function<typename detail::remove_function_top_const<Func>::type> taskUnwrapped_;
+
+    public:
+        template <typename Obj>
+        task_wrapped(Func(Obj::*fptr), Obj *caller)
+            : taskUnwrapped_(detail::call_from_object<Func, Obj, Args...>{fptr, caller})
         {
         }
-        explicit task_wrapped(std::function<Func> &&taskUnwrapped) : taskUnwrapped_(std::move(taskUnwrapped))
+
+        template <typename Obj>
+        task_wrapped(Func(Obj::*fptr), std::shared_ptr<Obj> caller)
+            : taskUnwrapped_(detail::call_from_object<Func, Obj, Args...>{fptr, &*caller})
+        {
+        }
+        
+        task_wrapped(std::function<Func> &&taskUnwrapped)
+            : taskUnwrapped_(std::move(taskUnwrapped))
         {
         }
 
-        template <typename... Args>
+        task_wrapped(std::function<Func> &taskUnwrapped)
+            : taskUnwrapped_(taskUnwrapped)
+        {
+        }
+
+    public:
         auto operator()(Args &&...args) const noexcept
         {
-            using Ret = decltype(taskUnwrapped_(std::forward<Args>(args)...), std::optional<detail::dummy>());
+            using detail::dummy;
             try
             {
                 boost::this_thread::interruption_point();
@@ -114,7 +120,7 @@ namespace utility
             }
             try
             {
-                return taskUnwrapped_(std::forward<Args>(args)...), std::optional<detail::dummy>(detail::dummy{});
+                return taskUnwrapped_(std::forward<Args>(args)...), std::optional<dummy>(dummy{});
             }
             catch (const std::exception &ex)
             {
@@ -129,7 +135,21 @@ namespace utility
                 std::cerr << "unknown error when calling the function: "
                           << boost::typeindex::type_id<Func>() << '\n';
             }
-            return Ret();
+            return decltype(taskUnwrapped_(std::forward<Args>(args)...), std::optional<dummy>())();
         }
     };
+
+    template <class T, class... Args>
+    constexpr std::unique_ptr<T> safe_make_unique(Args &&...args) noexcept
+    {
+        return task_wrapped<std::unique_ptr<T>(Args...)>
+            (detail::safe_make_unique_impl<T, Args...>)(std::forward<Args>(args)...).value();
+    }
+    
+    template <class T, class... Args>
+    constexpr std::shared_ptr<T> safe_make_shared(Args &&...args) noexcept
+    {
+        return task_wrapped<std::shared_ptr<T>(Args...)>
+            (detail::safe_make_shared_impl<T, Args...>)(std::forward<Args>(args)...).value();
+    }
 }

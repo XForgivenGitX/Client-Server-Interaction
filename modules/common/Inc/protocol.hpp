@@ -45,3 +45,28 @@ namespace common
     
     std::optional<splited_frame> split_frame(const std::string &frame);
 }
+
+
+/*
+struct bad_server : std::exception
+{
+    virtual const char *what() const noexcept
+    {
+        return "server crashed on the initiative of the developer";
+    }
+    virtual ~bad_server() = default;
+};
+
+template <typename T>
+struct singleton
+{
+    static T &get_instanse()
+    {
+        static T instance;
+        return instance;
+    }
+
+protected:
+    singleton() = default;
+};
+*/
