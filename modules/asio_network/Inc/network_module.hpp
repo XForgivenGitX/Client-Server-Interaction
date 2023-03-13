@@ -28,7 +28,7 @@ enum class tags
 
 #define FRAME_MAX_LENGHT  128
 #define FRAME_MIN_LENGHT  1
-#define NETWORK_MODULE_DEBUG
+//#define NETWORK_MODULE_DEBUG
 //#define NETWORK_MODULE_RELEASE
 
 /////////////////////////////////////

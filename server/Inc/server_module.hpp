@@ -12,7 +12,7 @@
 #include <boost/thread/thread.hpp>
 
 /////////////////////////////////
-#define SERVER_MODULE_DEBUG
+//#define SERVER_MODULE_DEBUG
 
 /////////////////////////////////
 #include <chat_room.hpp>
