@@ -38,6 +38,7 @@ void server::server_session::accept_connections(anet::tcp_listener_ptr &&listene
     anet::listen::accepting_connection(std::move(listener), {accepted_connection_handler, this});
 }
 
+
 void server::server_session::authorization_handler(anet::socket_data_ptr socketData, const boost::system::error_code &error) noexcept
 {
     error ? socketData->shutdown() : room_.enter_user(socketData, utility::safe_make_shared<simple_chat_user>(room_, socketData->receive_buffer_));

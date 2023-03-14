@@ -23,7 +23,6 @@ std::string server::simple_chat_user::configure_message(const std::string& users
 
 void server::simple_chat_user::receive_message_handler(anet::socket_data_ptr socketData, const boost::system::error_code &error) noexcept
 {
-    if(error || !socketData->socket_.is_open()) myRoom_.leave_user(socketData);
 #ifdef SERVER_MODULE_DEBUG
     std::cout << ">> " << socketData->receive_buffer_ << std::endl;
 #endif
@@ -33,8 +32,7 @@ void server::simple_chat_user::receive_message_handler(anet::socket_data_ptr soc
 
 void server::simple_chat_user::send_message_handler(anet::socket_data_ptr socketData, const boost::system::error_code &error) noexcept
 {
-    if(error || !socketData->socket_.is_open()) myRoom_.leave_user(socketData);
 #ifdef SERVER_MODULE_DEBUG
     std::cout << "<< " << socketData->send_buffer_ << '\n';
-#endif   
+#endif
 }

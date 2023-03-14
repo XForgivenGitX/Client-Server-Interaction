@@ -40,7 +40,7 @@ namespace utility::detail
         Obj *caller_;
 
     public:
-        call_from_object(F(Obj::*fptr), Obj *caller)
+        call_from_object(F (Obj::*fptr), Obj *caller)
             : fptr_(fptr), caller_(caller) {}
         auto operator()(Args... args)
         {
@@ -78,30 +78,30 @@ namespace utility
     template <class R, class... Args>
     struct task_wrapped<R(Args...)>
     {
-        using Func = R(Args...);
+        using F = R(Args...);
 
     public:
-        const std::function<typename detail::remove_function_top_const<Func>::type> taskUnwrapped_;
+        const std::function<typename detail::remove_function_top_const<F>::type> taskUnwrapped_;
 
     public:
         template <typename Obj>
-        task_wrapped(Func(Obj::*fptr), Obj *caller)
-            : taskUnwrapped_(detail::call_from_object<Func, Obj, Args...>{fptr, caller})
+        task_wrapped(F(Obj::*fptr), Obj *caller)
+            : taskUnwrapped_(detail::call_from_object<F, Obj, Args...>{fptr, caller})
         {
         }
 
         template <typename Obj>
-        task_wrapped(Func(Obj::*fptr), std::shared_ptr<Obj> caller)
-            : taskUnwrapped_(detail::call_from_object<Func, Obj, Args...>{fptr, &*caller})
+        task_wrapped(F(Obj::*fptr), std::shared_ptr<Obj> caller)
+            : taskUnwrapped_(detail::call_from_object<F, Obj, Args...>{fptr, &*caller})
         {
         }
         
-        task_wrapped(std::function<Func> &&taskUnwrapped)
+        task_wrapped(std::function<F> &&taskUnwrapped)
             : taskUnwrapped_(std::move(taskUnwrapped))
         {
         }
 
-        task_wrapped(std::function<Func> &taskUnwrapped)
+        task_wrapped(std::function<F> &taskUnwrapped)
             : taskUnwrapped_(taskUnwrapped)
         {
         }
@@ -133,7 +133,7 @@ namespace utility
             catch (...)
             {
                 std::cerr << "unknown error when calling the function: "
-                          << boost::typeindex::type_id<Func>() << '\n';
+                          << boost::typeindex::type_id<F>() << '\n';
             }
             return decltype(taskUnwrapped_(std::forward<Args>(args)...), std::optional<dummy>())();
         }
