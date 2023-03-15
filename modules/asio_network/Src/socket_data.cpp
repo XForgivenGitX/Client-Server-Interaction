@@ -44,6 +44,11 @@ anet::socket_data_endpoint_ptr anet::make_socket_data(io__::io_context &ios, end
         (utility::safe_make_shared<socket_data>(ios), endPoint);
 }
 
+anet::socket_data_endpoint_ptr anet::make_socket_data(socket_data_ptr& socketData, end_point_wrapper& endPoint)
+{
+    return utility::safe_make_unique<socket_data_endpoint>(socketData, endPoint);
+}
+
 anet::socket_data_ptr anet::make_socket_data(io__::io_context &ios)
 {
     return utility::safe_make_shared<socket_data>(ios);

@@ -12,6 +12,8 @@ namespace common
     {
         MESSAGE_LOW_LEVEL = 1,
         MESSAGE_HIGH_LEVEL = 50,
+        ROOM_NAME_LOW_LEVEL = 5,
+        ROOM_NAME_HIGH_LEVEL = 20,
         NAME_LOW_LEVEL = 5,
         NAME_HIGH_LEVEL = 20,
         COMMAND_INDEX = 1,
@@ -21,17 +23,7 @@ namespace common
 
     enum class command : unsigned
     {
-        REPEAT_REQUEST,
-        CONNECT_REQUEST,
-        SEND_REQUEST,
-        AUTHORIZ_REQUEST,
-        DISCONNECT_REQUEST,
-
-        REPEAT_STATUS,
-        CONNECT_STATUS,
-        SEND_STATUS,
-        AUTHORIZ_STATUS,
-        DISCONNECT_STATUS
+        
     };
 
     struct splited_frame

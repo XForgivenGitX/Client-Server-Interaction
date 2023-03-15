@@ -48,6 +48,7 @@ namespace anet
     };
     typedef std::unique_ptr<socket_data_endpoint> socket_data_endpoint_ptr;
     
+    socket_data_endpoint_ptr make_socket_data(socket_data_ptr& socketData, end_point_wrapper& endPoint);
     socket_data_endpoint_ptr make_socket_data(io__::io_context& ios, end_point_wrapper& endPoint);
     socket_data_ptr make_socket_data(io__::io_context& ios);
 }

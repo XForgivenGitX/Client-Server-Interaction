@@ -3,6 +3,43 @@
 
 namespace server
 {
+    struct access_user
+    {
+    public:
+        std::string name_, pass_;
+        std::atomic<bool> status;
+    
+    public:
+        access_user(std::string name, std::string pass) : name_(name), pass_(pass){}
+        bool is_name(std::string& rhs)
+        {
+            return name_ == rhs;
+        }
+        bool operator==(access_user& rhs)
+        {
+            return (rhs.name_ == name_) == (rhs.pass_ == pass_);
+        }
+    };
+    
+    class user_database : public boost::noncopyable
+    {
+        using ip_type = std::string;
+        
+        using users_config_tree = std::map<ip_type, access_user>;
+        using users_names_tree  = std::set<std::string>;
+        using room_config_table = std::unordered_map<std::string, chat_room>;
+    
+    private:
+        users_config_tree usersConfig;
+        users_names_tree usersNames;
+        room_config_table activeRooms;
+
+    
+    };
+    
+    
+    
+    
     class server_session : public boost::noncopyable
     {
     private:

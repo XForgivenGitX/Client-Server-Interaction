@@ -1,8 +1,69 @@
 #pragma once
 #include <client_module.hpp>
 
+//TODO
+//1.Очищать буффер cin
+
 namespace client
 {
+    class client_session
+    {
+        anet::socket_data_ptr socketData_;
+    
+    public:
+        client_session(io__::io_context &ios, anet::end_point_wrapper endPoint, std::string name)
+            : socketData_(anet::make_socket_data(ios))
+        {
+            anet::connection::connection_request(anet::make_socket_data(socketData_, endPoint), {&connection_handler, this});
+        }
+
+        void connection_handler(anet::socket_data_endpoint_ptr &&socketDataEndPoint, const boost::system::error_code &error)
+        {
+            if(error)
+            {
+                throw "Technical work is being carried out on the server.\
+                        Access is temporarily unavailable. Exit...";
+            }
+            else
+            {
+                std::cout << "Create a new account / log in to an existing [0/1]?\n";
+                std::cin.get() ? log_in_account() : create_account();
+            }
+        }
+
+        void create_account()
+        {
+            create_name();
+        }
+        
+        void create_name()
+        {
+            std::cout << "Enter name(5-20ch):";
+            std::cin >> socketData_->send_buffer_;
+            anet::send_receive::send(socketData_, {authirization_handler, this});
+        }
+        
+        void create_name_handler(anet::socket_data_ptr socketData, const boost::system::error_code &error)
+        {
+            if(error)
+            {
+                throw "Error send data. Exit...";
+            }
+            else
+            {
+                
+            }
+        }
+        void log_in_account()
+        {
+
+        }
+    };
+    
+    
+    
+    
+#if 0
     class client_session
     {
     public:
@@ -68,4 +129,5 @@ namespace client
 
         }
     };
+#endif
 }
