@@ -12,7 +12,7 @@ void anet::send_receive::receive(anet::socket_data_ptr socketData, callback_func
     if(!socketData->socket_.is_open()) throw utility::bad_socket{};
     auto &[socket, send_buffer, receive_buffer] = *socketData;
     receive_buffer.resize(atMostBytes);
-    io__::async_read(socket, io__::buffer(receive_buffer), io__::transfer_at_least(1), callback_function_wrapper(socketData, std::move(handler), tags::receive_tag));
+    io__::async_read(socket, io__::buffer(receive_buffer), io__::transfer_at_least(FRAME_MIN_LENGHT), callback_function_wrapper(socketData, std::move(handler), tags::receive_tag));
     
 }
 

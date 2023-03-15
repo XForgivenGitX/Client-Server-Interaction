@@ -14,9 +14,8 @@ namespace server
         
     public:
         simple_chat_user(chat_room& myRoom, const data_t& name);
-        ~simple_chat_user();
-    
-     private:
+ 
+    private:
         std::string configure_message(const std::string& usersMessage) const;
     
     public:

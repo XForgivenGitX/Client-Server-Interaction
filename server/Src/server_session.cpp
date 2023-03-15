@@ -21,9 +21,9 @@ void server::server_session::accepted_connection_handler(anet::tcp_listener_ptr 
     else
     { 
 #ifdef SERVER_MODULE_DEBUG
-        std::cout << "Successful connection.\nSystem:"
+        std::cout << "Successful connection. System: "
                   << error.message()
-                  << "\nIPv4: "
+                  << ". IPv4: "
                   << newSocket->socket_.remote_endpoint().address().to_string()
                   << '\n';
 #endif
@@ -37,7 +37,6 @@ void server::server_session::accept_connections(anet::tcp_listener_ptr &&listene
 {
     anet::listen::accepting_connection(std::move(listener), {accepted_connection_handler, this});
 }
-
 
 void server::server_session::authorization_handler(anet::socket_data_ptr socketData, const boost::system::error_code &error) noexcept
 {

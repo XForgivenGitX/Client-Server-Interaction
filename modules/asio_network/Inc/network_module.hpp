@@ -9,7 +9,7 @@
 #define BOOST_ASIO_NO_DEPRECATED
 //#define BOOST_ASIO_ENABLE_HANDLER_TRACKING
 #define BOOST_ASIO_DEFAULT_LINKED_LIBS
-
+#define BOOST_NO_ANSI_APIS  
 /////////////////////////////////////
 #include <boost/system/error_code.hpp>
 #include <boost/asio/write.hpp>

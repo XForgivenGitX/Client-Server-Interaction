@@ -26,8 +26,8 @@ namespace client
             auto& socketData = socketDataEndPoint->socketData_;
             if(error)
             {
-                std::cerr << "Connection error, system:" << error.message() << ".\n";
-                exit(1);
+                std::cerr << "Connection error, system: " << error.message() << ".\n";
+                exit(0);
             }
             else
             {

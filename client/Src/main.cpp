@@ -4,6 +4,7 @@ using resolver = io__::ip::tcp::resolver;
 
 int main(int argc, char **argv)
 {
+    system("chcp 1251");
     if (argc != 4)
     {
         std::cerr << "Incorrect arguments. Usage: <nickname> <host> <port>\n";

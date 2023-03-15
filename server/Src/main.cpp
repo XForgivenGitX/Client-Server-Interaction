@@ -3,6 +3,7 @@ using namespace server;
 
 int main(int argc, char** argv) 
 { 
+    system("chcp 1251");
     if(argc < 2) 
     {
         std::cerr << "Incorrect arguments. Usage: <ports...> \n";
