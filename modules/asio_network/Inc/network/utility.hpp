@@ -47,18 +47,6 @@ namespace utility::detail
             return (caller_->*fptr_)(std::forward<Args>(args)...);
         }
     };
-    
-    template <class T, class... Args>
-    constexpr std::unique_ptr<T> safe_make_unique_impl(Args &&...args)
-    {
-        return std::make_unique<T>(std::forward<Args>(args)...);
-    }
-    
-    template <class T, class... Args>
-    constexpr std::shared_ptr<T> safe_make_shared_impl(Args &&...args)
-    {
-        return std::make_shared<T>(std::forward<Args>(args)...);
-    }
 }
 
 namespace utility
@@ -138,18 +126,4 @@ namespace utility
             return decltype(taskUnwrapped_(std::forward<Args>(args)...), std::optional<dummy>())();
         }
     };
-
-    template <class T, class... Args>
-    constexpr std::unique_ptr<T> safe_make_unique(Args &&...args) noexcept
-    {
-        return task_wrapped<std::unique_ptr<T>(Args...)>
-            (detail::safe_make_unique_impl<T, Args...>)(std::forward<Args>(args)...).value();
-    }
-    
-    template <class T, class... Args>
-    constexpr std::shared_ptr<T> safe_make_shared(Args &&...args) noexcept
-    {
-        return task_wrapped<std::shared_ptr<T>(Args...)>
-            (detail::safe_make_shared_impl<T, Args...>)(std::forward<Args>(args)...).value();
-    }
 }

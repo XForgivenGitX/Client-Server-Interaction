@@ -15,11 +15,11 @@ void anet::connection::async_connection_request(io__::io_context &ios, socket_da
 }
 
 anet::tcp_listener::tcp_listener(io__::io_context &ios, const end_point_wrapper &endPoint)
-    : acceptor_(ios, endPoint.point_), socketData_(utility::safe_make_unique<socket_data>(ios))
+    : acceptor_(ios, endPoint.point_), socketData_(std::make_unique<socket_data>(ios))
 {
 }
 anet::tcp_listener::tcp_listener(io__::io_context &ios, end_point_wrapper &&endPoint)
-    : acceptor_(ios, endPoint.point_), socketData_(utility::safe_make_unique<socket_data>(ios))
+    : acceptor_(ios, endPoint.point_), socketData_(std::make_unique<socket_data>(ios))
 {
 }
 

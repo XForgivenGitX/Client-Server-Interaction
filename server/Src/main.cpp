@@ -17,7 +17,7 @@ int main(int argc, char** argv)
     {
         // workers.push_back(utility::safe_make_shared<worker_t>
         //             (io__::make_work_guard(iocontexts[i])));
-        servers.push_back(utility::safe_make_shared<server_session>
+        servers.push_back(std::make_shared<server_session>
                     (iocontexts[i], static_cast<unsigned short>(std::atoi(argv[i + 1]))));
     }
     std::for_each(servers.begin(), servers.end(), [](auto& server){server->start();});

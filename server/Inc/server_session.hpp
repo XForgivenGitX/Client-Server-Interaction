@@ -34,11 +34,13 @@ namespace server
         users_names_tree usersNames;
         room_config_table activeRooms;
 
+        mutable std::shared_mutex mut;
     public: // find, set and get methods
     };
 
-    class server_control_block : public user_database
+    class server_control_block : boost::noncopyable, std::enable_shared_from_this<server_control_block>
     {
+        user_database dataBase;
         const anet::end_point_wrapper endPoint_;
         io__::io_context &ios_;
     
@@ -48,18 +50,21 @@ namespace server
     
         void start_accepting_connections() //timeout
         {
-            accept_connections(utility::safe_make_unique<anet::tcp_listener>(ios_, endPoint_));
+            accept_connections(std::make_unique<anet::tcp_listener>(ios_, endPoint_));//new, ctor
         }
     
     private:
         void accept_connections(anet::tcp_listener_ptr &&listener) noexcept
         {
-            anet::listen::accepting_connection(std::move(listener), {&accepted_connection_handler, this});
+#if defined(SERVER_MODULE_DEBUG)
+            std::cout << "server " << this << "listens on port " << endPoint_.point_.port() << '\n';
+#endif
+            anet::listen::accepting_connection(std::move(listener), 
+                {&server_control_block::accepted_connection_handler, this});
         }
 
         void accepted_connection_handler(anet::tcp_listener_ptr &&listener, const boost::system::error_code &error) noexcept
         {
-            
             accept_connections(std::move(listener));
         }
     };
