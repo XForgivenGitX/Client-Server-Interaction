@@ -20,7 +20,7 @@ namespace common
         ARGUMENT_INDEX = 2
         //...
     };
-
+    //<5>%<Oleg><1234567890>
     enum class command : unsigned
     {
         
