@@ -1,8 +1,42 @@
 #pragma once
 #include <server_module.hpp>
-
 namespace server
 {
+    
+    
+    class thread_pool : boost::noncopyable
+    {
+        std::vector<io__::io_context> ioses;
+        
+        boost::thread_group pool;
+    
+    public:
+        thread_pool(unsigned int thread_quantity) : ioses(thread_quantity){}
+        void start_pool()
+        {
+            std::for_each(ioses.begin(), ioses.end(), [this](auto& ios)
+            {
+                pool.create_thread([&ios]{ios.run();});
+            });
+        }
+        void join_pool()
+        {
+            pool.join_all();
+        }
+    
+    public:
+        io__::io_context& get_minimally_loaded_ios() const//....
+        {
+            //io__::io_context& min_loaded_ios = ioses[0];
+            //std::min_element()
+            std::for_each(ioses.begin() + 1, ioses.end(), [this, &min_loaded_ios](auto& ios)
+            {if(min_loaded_ios. )});
+        }
+    };
+    
+    
+    
+    
     struct access_user
     {
     public:
@@ -50,7 +84,7 @@ namespace server
     
         void start_accepting_connections() //timeout
         {
-            accept_connections(std::make_unique<anet::tcp_listener>(ios_, endPoint_));//new, ctor
+            accept_connections(std::make_unique<anet::tcp_listener>(ios_, endPoint_));//ex new
         }
     
     private:
