@@ -12,7 +12,7 @@ namespace client
     
     public:
         client_session(io__::io_context &ios, anet::end_point_wrapper endPoint, std::string name)
-            : socketData_(anet::make_socket_data(ios))
+            : socketData_(anet::make_socket_data(ios.get_executor()))
         {
             anet::connection::connection_request(anet::make_socket_data(socketData_, endPoint), {&connection_handler, this});
         }
@@ -40,7 +40,7 @@ namespace client
         {
             std::cout << "Enter name(5-20ch):";
             std::cin >> socketData_->send_buffer_;
-            anet::send_receive::send(socketData_, {authirization_handler, this});
+            //anet::send_receive::send(socketData_, {authirization_handler, this});
         }
         
         void create_name_handler(anet::socket_data_ptr socketData, const boost::system::error_code &error)

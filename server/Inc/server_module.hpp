@@ -9,10 +9,12 @@
 #include <network_module.hpp>
 #include <boost/asio/executor_work_guard.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
-#include <boost/thread/thread.hpp>
+#include <boost/thread/thread.hpp>//del
+#include <boost/asio/thread_pool.hpp>
 
 /////////////////////////////////
 #define SERVER_MODULE_DEBUG
+#define SERVER_ENABLE_HANDLER_TRACKING
 
 /////////////////////////////////
 #include <chat_room.hpp>

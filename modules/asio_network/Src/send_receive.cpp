@@ -3,14 +3,21 @@
 void anet::send_receive::send(anet::socket_data_ptr socketData, callback_func_t &&handler)
 {
     auto &[socket, send_buffer, receive_buffer] = *socketData;
-    io__::async_write(socket, io__::buffer(send_buffer), callback_function_wrapper(socketData, std::move(handler), tags::send_tag));
+    io__::async_write(socket, io__::buffer(send_buffer), 
+        callback_function_wrapper(socketData, 
+        std::move(handler), 
+        tags::send_tag));
 }
 
-void anet::send_receive::receive(anet::socket_data_ptr socketData, callback_func_t &&handler, std::size_t atMostBytes, std::size_t atLeastBytes)
+void anet::send_receive::receive(anet::socket_data_ptr socketData, 
+                    callback_func_t &&handler, std::size_t atMostBytes, std::size_t atLeastBytes)
 {
     auto &[socket, send_buffer, receive_buffer] = *socketData;
     receive_buffer.resize(atMostBytes);
-    io__::async_read(socket, io__::buffer(receive_buffer), io__::transfer_at_least(FRAME_MIN_LENGHT), callback_function_wrapper(socketData, std::move(handler), tags::receive_tag));
+    io__::async_read(socket, io__::buffer(receive_buffer), 
+        io__::transfer_at_least(FRAME_MIN_LENGHT), 
+        callback_function_wrapper(socketData, 
+        std::move(handler), tags::receive_tag));
     
 }
 
@@ -25,14 +32,14 @@ void anet::send_receive::callback_function_wrapper::operator()
     if(tag_ == tags::receive_tag)
             socketData_->receive_buffer_.resize(bytesTransferred);
 
-#ifdef NETWORK_MODULE_DEBUG
+#ifdef NETWORK_ENABLE_HANDLER_TRACKING
     switch(tag_)
     {
         case tags::receive_tag:
-            std::cout << "Receive: " << bytesTransferred << " bytes, " << socketData_->receive_buffer_ << '\n';
+            std::cout << "  @>>>>: " << bytesTransferred << " bytes: " << socketData_->receive_buffer_ << '\n';
             break;
         case tags::send_tag:
-            std::cout << "Send: " << bytesTransferred << " bytes, " << socketData_->send_buffer_ << '\n';
+            std::cout << "  @<<<<: " << bytesTransferred << " bytes: " << socketData_->send_buffer_ << '\n';
             break;
     }
 #endif

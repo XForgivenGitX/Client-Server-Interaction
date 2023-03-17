@@ -10,7 +10,7 @@ namespace anet
         data_t send_buffer_, receive_buffer_;
     
     public:   
-        explicit socket_data(io__::io_context&);
+        explicit socket_data(io__::any_io_executor);
         ~socket_data();
     
     public: 
@@ -19,7 +19,7 @@ namespace anet
     typedef std::shared_ptr<socket_data> socket_data_ptr;
 
 //_____
-    
+
     struct end_point_wrapper
     {
     public:   
@@ -48,7 +48,12 @@ namespace anet
     };
     typedef std::unique_ptr<socket_data_endpoint> socket_data_endpoint_ptr;
     
-    socket_data_endpoint_ptr make_socket_data(socket_data_ptr& socketData, end_point_wrapper& endPoint);
-    socket_data_endpoint_ptr make_socket_data(io__::io_context& ios, end_point_wrapper& endPoint);
-    socket_data_ptr make_socket_data(io__::io_context& ios);
+    socket_data_endpoint_ptr make_socket_data(socket_data_ptr& socketData, 
+                                            end_point_wrapper& endPoint);
+    
+    socket_data_endpoint_ptr make_socket_data(io__::any_io_executor ios, 
+                                            end_point_wrapper& endPoint);
+    
+    socket_data_ptr make_socket_data(io__::any_io_executor ios);
+
 }

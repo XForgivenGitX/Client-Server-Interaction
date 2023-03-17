@@ -1,6 +1,6 @@
 #include <network_module.hpp>
 
-anet::socket_data::socket_data(io__::io_context &ios) : socket_(ios)
+anet::socket_data::socket_data(io__::any_io_executor ios) : socket_(ios)
 {
 }
 
@@ -38,7 +38,7 @@ anet::socket_data_endpoint::socket_data_endpoint(socket_data_ptr socketData, end
 {
 }
 
-anet::socket_data_endpoint_ptr anet::make_socket_data(io__::io_context &ios, end_point_wrapper &endPoint)
+anet::socket_data_endpoint_ptr anet::make_socket_data(io__::any_io_executor ios, end_point_wrapper &endPoint)
 {
     return std::make_unique<socket_data_endpoint>
         (std::make_shared<socket_data>(ios), endPoint);
@@ -49,7 +49,7 @@ anet::socket_data_endpoint_ptr anet::make_socket_data(socket_data_ptr& socketDat
     return std::make_unique<socket_data_endpoint>(socketData, endPoint);
 }
 
-anet::socket_data_ptr anet::make_socket_data(io__::io_context &ios)
+anet::socket_data_ptr anet::make_socket_data(io__::any_io_executor ios)
 {
     return std::make_shared<socket_data>(ios);
 }

@@ -21,17 +21,13 @@ namespace common
         //...
     };
     //<5>%<Oleg><1234567890>
-    enum class command : unsigned
-    {
-        
-    };
 
     struct splited_frame
     {
         typedef std::vector<std::string> args_t;
 
     public:
-        command cmd_;
+        int cmd_;
         args_t args_;
     };
     

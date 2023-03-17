@@ -1,5 +1,5 @@
 #include <server_module.hpp>
-
+#if i
 server::server_session::server_session(io__::io_context &ios, unsigned short port)
     : ios_(ios), endPoint_(port, io__::ip::tcp::v4()) {}
 
@@ -42,3 +42,4 @@ void server::server_session::authorization_handler(anet::socket_data_ptr socketD
 {
     error ? socketData->shutdown() : room_.enter_user(socketData, std::make_shared<simple_chat_user>(room_, socketData->receive_buffer_));
 }
+#endif

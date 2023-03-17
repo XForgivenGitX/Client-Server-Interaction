@@ -108,7 +108,8 @@ namespace utility
             }
             try
             {
-                return taskUnwrapped_(std::forward<Args>(args)...), std::optional<dummy>(dummy{});
+                return taskUnwrapped_(std::forward<Args>(args)...), 
+                        std::optional<dummy>(dummy{});
             }
             catch (const std::exception &ex)
             {
@@ -123,7 +124,8 @@ namespace utility
                 std::cerr << "unknown error when calling the function: "
                           << boost::typeindex::type_id<F>() << '\n';
             }
-            return decltype(taskUnwrapped_(std::forward<Args>(args)...), std::optional<dummy>())();
+            return decltype(taskUnwrapped_(std::forward<Args>(args)...), 
+                        std::optional<dummy>())();
         }
     };
 }

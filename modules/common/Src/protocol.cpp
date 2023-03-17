@@ -2,8 +2,8 @@
 
 std::optional<splited_frame> common::split_frame(const std::string &frame)
 {
-    const std::regex expr(R"(\[\$(\d+)(\$(\{[^{}]+\})*)?\])");
-    const std::regex args(R"(\{([^{}]*)\})");
+    static const std::regex expr(R"(\[\<(\d+)(\>%(\<[^<>]+\>)*)?\])");
+    static const std::regex args(R"(\<[^<>]+\>)");
     std::smatch tokens;
     splited_frame sframe;
     if (std::regex_match(frame, tokens, expr))
