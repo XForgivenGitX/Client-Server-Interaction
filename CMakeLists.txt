@@ -17,6 +17,7 @@ set (CMAKE_CXX_STANDARD 20)
 set (RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 add_subdirectory(modules/asio_network)
+add_subdirectory(modules/common)
 add_subdirectory(server)
 add_subdirectory(client)
 
@@ -27,5 +28,4 @@ add_subdirectory(client)
 # https://habr.com/ru/post/649363/
 # https://docs.github.com/ru/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax
 # https://github.com/botaojia/chat/blob/master/chat_client.cpp
-# ATMOSPHERIC PHONK for BAD MOOD
 # https://ru.wikipedia.org/wiki/%D0%9F%D0%B5%D1%80%D0%B5%D0%BD%D0%B0%D0%BF%D1%80%D0%B0%D0%B2%D0%BB%D0%B5%D0%BD%D0%B8%D0%B5_%D0%B2%D0%B2%D0%BE%D0%B4%D0%B0-%D0%B2%D1%8B%D0%B2%D0%BE%D0%B4%D0%B0

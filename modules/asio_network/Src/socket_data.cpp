@@ -13,12 +13,10 @@ void anet::socket_data::shutdown() noexcept
         socket_.shutdown(io__::ip::tcp::socket::shutdown_both);
         socket_.close();
     }
-    catch (const boost::system::system_error &e)
+    catch (const boost::system::system_error &ex)
     {
-        std::cerr << e.what() << '\n';
-#ifdef NETWORK_MODULE_RELEASE
-        assert(false);
-#endif
+        std::cerr << "@thread:" << boost::this_thread::get_id() << ": " << ex.what() << '\n';
+        std::terminate();
     }
 }
 

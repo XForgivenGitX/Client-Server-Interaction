@@ -3,10 +3,12 @@
 void anet::send_receive::send(anet::socket_data_ptr socketData, callback_func_t &&handler)
 {
     auto &[socket, send_buffer, receive_buffer] = *socketData;
-    io__::async_write(socket, io__::buffer(send_buffer), 
-        callback_function_wrapper(socketData, 
-        std::move(handler), 
-        tags::send_tag));
+    io__::async_write
+        (
+            socket, io__::buffer(send_buffer), 
+            callback_function_wrapper(socketData, 
+                std::move(handler), tags::send_tag)
+        );
 }
 
 void anet::send_receive::receive(anet::socket_data_ptr socketData, 
@@ -14,10 +16,13 @@ void anet::send_receive::receive(anet::socket_data_ptr socketData,
 {
     auto &[socket, send_buffer, receive_buffer] = *socketData;
     receive_buffer.resize(atMostBytes);
-    io__::async_read(socket, io__::buffer(receive_buffer), 
-        io__::transfer_at_least(FRAME_MIN_LENGHT), 
-        callback_function_wrapper(socketData, 
-        std::move(handler), tags::receive_tag));
+    io__::async_read
+        (
+            socket, io__::buffer(receive_buffer), 
+            io__::transfer_at_least(FRAME_MIN_LENGHT), 
+            callback_function_wrapper(socketData, 
+                std::move(handler), tags::receive_tag)
+        );
     
 }
 

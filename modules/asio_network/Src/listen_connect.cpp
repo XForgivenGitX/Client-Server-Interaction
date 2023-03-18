@@ -3,14 +3,14 @@
 void anet::connection::connection_request(socket_data_endpoint_ptr 
                                             &&socketDataEndpoint, callback_func_t &&handler)
 {
-    boost::system::error_code error = socketDataEndpoint->connect();
+    auto error = socketDataEndpoint->connect();
     handler(std::move(socketDataEndpoint), error);
 }
 
 void anet::connection::async_connection_request(io__::any_io_executor ios, 
                                 socket_data_endpoint_ptr &&socketDataEndpoint, callback_func_t &&handler)
 {
-    boost::system::error_code error = socketDataEndpoint->connect();
+    auto error = socketDataEndpoint->connect();
     callback_func_t wrappedHandler(std::move(handler));
     io__::post(ios, [wrappedHandler, socketDataEndpoint_ = std::move(socketDataEndpoint), error]() mutable
     {wrappedHandler(std::move(socketDataEndpoint_), error);});
@@ -30,6 +30,7 @@ anet::listen::callback_function_wrapper::callback_function_wrapper(
     : listener_(std::move(listener)), functionUnwrapped_(std::move(handler))
 {
 }
+
 void anet::listen::callback_function_wrapper::operator()(const boost::system::error_code &error) noexcept
 {
     functionUnwrapped_(std::move(listener_), error);

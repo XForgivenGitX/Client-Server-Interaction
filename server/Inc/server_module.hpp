@@ -17,8 +17,8 @@
 #define SERVER_ENABLE_HANDLER_TRACKING
 
 /////////////////////////////////
-#include <chat_room.hpp>
-#include <chat_user.hpp>
+//#include <chat_room.hpp>
+//#include <chat_user.hpp>
 //__
 #include <server_session.hpp>
 

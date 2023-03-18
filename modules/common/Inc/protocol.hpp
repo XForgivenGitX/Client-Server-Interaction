@@ -6,55 +6,43 @@
 #include <optional>
 #include <algorithm>
 
+#define COMMAND_INDEX       1
+#define ARGUMENT_INDEX      2
+#define NAME_INDEX          0
+#define PASS_INDEX          1
+
 namespace common
 {
     enum class protocol : unsigned
     {
-        MESSAGE_LOW_LEVEL = 1,
-        MESSAGE_HIGH_LEVEL = 50,
-        ROOM_NAME_LOW_LEVEL = 5,
-        ROOM_NAME_HIGH_LEVEL = 20,
-        NAME_LOW_LEVEL = 5,
-        NAME_HIGH_LEVEL = 20,
-        COMMAND_INDEX = 1,
-        ARGUMENT_INDEX = 2
-        //...
+        MESSAGE_LOW_LENGHT = 1,
+        MESSAGE_HIGH_LENGHT = 50,
+        ROOM_NAME_LOW_LENGHT = 5,
+        ROOM_NAME_HIGH_LENGHT = 20,
+        NAME_LOW_LENGHT = 5,
+        NAME_HIGH_LENGHT = 20
     };
-    //<5>%<Oleg><1234567890>
-
+    enum class command : unsigned
+    {
+        LOG_IN_REQ,
+        REPEAT_LOG_IN_REQ,
+        LOG_IN_RESP,
+        
+        REGISTER_REQ,
+        REPEAT_REG_REQ,
+        REGISTER_RESP
+    };
+    
     struct splited_frame
     {
         typedef std::vector<std::string> args_t;
 
     public:
-        int cmd_;
+        command cmd_;
         args_t args_;
     };
     
     std::optional<splited_frame> split_frame(const std::string &frame);
+    std::string assemble_frame(common::command cmd);
+    std::string assemble_frame(command cmd, std::vector<std::string> args);
 }
-
-
-/*
-struct bad_server : std::exception
-{
-    virtual const char *what() const noexcept
-    {
-        return "server crashed on the initiative of the developer";
-    }
-    virtual ~bad_server() = default;
-};
-
-template <typename T>
-struct singleton
-{
-    static T &get_instanse()
-    {
-        static T instance;
-        return instance;
-    }
-
-protected:
-    singleton() = default;
-};
-*/

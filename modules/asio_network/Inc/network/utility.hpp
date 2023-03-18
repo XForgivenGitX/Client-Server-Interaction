@@ -104,7 +104,7 @@ namespace utility
             }
             catch (const boost::thread_interrupted &)
             {
-                std::cerr << "thread interruption" << '\n';
+                std::cerr << "@thread:" << boost::this_thread::get_id() << ": " << "interruption" << '\n';
             }
             try
             {
@@ -117,11 +117,11 @@ namespace utility
             }
             catch (const boost::thread_interrupted &)
             {
-                std::cerr << "thread interruption" << '\n';
+                std::cerr << "@thread:" << boost::this_thread::get_id() << ": " << "interruption" << '\n';
             }
             catch (...)
             {
-                std::cerr << "unknown error when calling the function: "
+                std::cerr << "@unknown error when calling the function: "
                           << boost::typeindex::type_id<F>() << '\n';
             }
             return decltype(taskUnwrapped_(std::forward<Args>(args)...), 

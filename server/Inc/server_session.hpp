@@ -2,111 +2,110 @@
 #include <server_module.hpp>
 #include <unordered_set>
 #include <boost/serialization/singleton.hpp>
-#include <vector>
+#include <protocol.hpp>
+#include <map>
 
-using namespace std::literals::string_literals;
+using namespace common;
 namespace server
 {
-    enum class command : unsigned
-    {
-
-    };
     
-    //<5>%<Oleg><1234567890>
-    std::string assemble_frame(command cmd, std::vector<std::string> args)
-    {
-        std::string frame("[<"s + std::to_string(static_cast<unsigned>(cmd)) + ">%"s);
-        for(auto& arg : args)
-            frame += "<"s + arg + ">"s;
-        return frame + "]"s;
-    }
-    
-    
-    struct user
+    struct registered_user
     {
     public:
         std::string name_, pass_;
-        std::atomic<bool> status;
 
     public:
-        user(std::string name, std::string pass) : name_(name), pass_(pass) {}
-        // bool is_name(std::string &rhs)
-        // {
-        //     return name_ == rhs;
-        // }
-        // bool operator==(access_user &rhs)
-        // {
-        //     return (rhs.name_ == name_) == (rhs.pass_ == pass_);
-        // }
+        registered_user(const std::string& name, const std::string& pass) 
+            : name_(name), pass_(pass) {}
+        registered_user() = default;
     };
 
     class user_database : public boost::noncopyable
     {
+    public:
         using ip_type = std::string;
         using name_t = std::string;
         
-        using users_config_tree = std::map<ip_type, user>;
-        using users_names_tree = std::set<std::string>;
-        using room_config_table = std::unordered_map<std::string, chat_room>;
+        typedef std::map<ip_type, registered_user> users_config_tree;
+        typedef std::set<std::string>   users_names_tree;
+        //typedef std::unordered_map<std::string, chat_room> room_config_table;
 
     private:
         users_config_tree usersConfig;
         users_names_tree usersNames;
-        room_config_table activeRooms;
+        //room_config_table activeRooms;
 
         mutable std::shared_mutex mut;
 
-    public: // find, set and get methods
-        //name_t is_name_occupied()
-        bool is_register_user(ip_type ip)
+    public:
+        bool is_register_user(const ip_type& ip) const
         {
             std::shared_lock lock(mut);
-            return usersConfig.find(ip) != usersConfig.end();
+            return usersConfig.contains(ip);
         }
+
+        bool is_contains_name(const name_t& name) const
+        {
+            std::shared_lock lock(mut);
+            return usersNames.contains(name);
+        }
+        
+        bool is_valid_user_data(const ip_type& ip, const name_t& name, const name_t& pass)//
+        {
+            std::shared_lock lock(mut);
+            auto& [valid_name, valid_pass] = usersConfig[ip];
+            return (valid_name == name) && (valid_pass == pass);
+        }
+    
+    public:
+        void add_user(const ip_type& ip, registered_user&& data)
+        {
+            std::lock_guard lock(mut);
+            usersNames.insert(data.name_);
+            usersConfig.insert({ip, std::move(data)});
+        }
+
+        
     };
     class chatLobby
     {
         user_database dataBase;
     public:
-        void authorization(anet::socket_data_ptr socketData)
-        {
-            if(dataBase.is_register_user(socketData->socket_.remote_endpoint().address().to_string()))
-            {
-                //log in
-            }
-            else
-            {
-                //register
-            }
-        }
+        void authorization(anet::socket_data_ptr socketData);
+
+        void auth_request_handler(anet::socket_data_ptr socketData, const boost::system::error_code &error) noexcept;
+    
+        void user_responce_handler(anet::socket_data_ptr socketData, const boost::system::error_code &error) noexcept;
+
     };
 
     class server_control_block : 
                         public boost::noncopyable, 
                         public boost::serialization::singleton<server_control_block>
     {
-        using connectedSockets = std::unordered_set<anet::socket_data_ptr>;
-
+        typedef std::unordered_map<anet::socket_data_ptr, user_database::ip_type> connected_ip_table;
     public:
         io__::thread_pool pool_;
-        const anet::end_point_wrapper endPoint_;
-        connectedSockets allUsers_;
+        connected_ip_table connectedIP;
         chatLobby lobby_;
     
-    public:
-        server_control_block(unsigned short port)
-            : pool_(boost::thread::hardware_concurrency()), endPoint_(port, io__::ip::tcp::v4()) {}
+    protected:
+        server_control_block()
+            : pool_(boost::thread::hardware_concurrency()) {}
 
-        void start_accepting_connections() // timeout
+    public:
+        void start_accepting_connections(unsigned short port) // timeout
         {
-            accept_connections(std::make_unique<anet::tcp_listener>(pool_, endPoint_)); // ex new
+            accept_connections(std::make_unique<anet::tcp_listener>(pool_.get_executor(), 
+                            anet::end_point_wrapper{port, io__::ip::tcp::v4()})); // ex new
         }
 
     private:
         void accept_connections(anet::tcp_listener_ptr &&listener) noexcept
         {
 #ifdef SERVER_ENABLE_HANDLER_TRACKING
-            std::cout << " @server=" << this << ": @listens " << endPoint_.point_.port() << '\n';
+            //std::cout << " @server=" << this << ": @listens " 
+                    //<< listener->socketData_->socket_. << '\n';
 #endif
             anet::listen::accepting_connection(std::move(listener),
                                                {&server_control_block::accepted_connection_handler, this});
@@ -121,19 +120,28 @@ namespace server
             }
             else
             {
-                auto newSocket = std::make_shared<anet::socket_data>(pool_);
+                auto newSocket = std::make_shared<anet::socket_data>(pool_.get_executor());
                 std::swap(newSocket, listener->socketData_);
 
 #ifdef SERVER_ENABLE_HANDLER_TRACKING
                 std::cout << " @server=" << this << ": @connect " << newSocket->socket_.remote_endpoint() << '\n';
 #endif
-                allUsers_.insert(newSocket);
-                io__::post(pool_, std::bind(chatLobby::authorization, lobby_, newSocket));
+                connectedIP[newSocket] = newSocket->socket_.remote_endpoint().address().to_string();
+                io__::post(pool_.get_executor(), std::bind(chatLobby::authorization, &lobby_, newSocket));
                 accept_connections(std::move(listener));
             }
         }
+    
+    public:
+        ~server_control_block()
+        {
+            for(auto& [socket, ip] : connectedIP)
+                socket->shutdown();
+            pool_.stop();
+        }
     };
 
+    
     class server_session : public boost::noncopyable
     {
 #if i
