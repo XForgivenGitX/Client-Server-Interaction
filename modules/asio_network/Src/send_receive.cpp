@@ -41,10 +41,10 @@ void anet::send_receive::callback_function_wrapper::operator()
     switch(tag_)
     {
         case tags::receive_tag:
-            std::cout << "  @>>>>: " << bytesTransferred << " bytes: " << socketData_->receive_buffer_ << '\n';
+            std::cout << "  @>>: " << bytesTransferred << " bytes: " << socketData_->receive_buffer_ << '\n';
             break;
         case tags::send_tag:
-            std::cout << "  @<<<<: " << bytesTransferred << " bytes: " << socketData_->send_buffer_ << '\n';
+            std::cout << "  @<<: " << bytesTransferred << " bytes: " << socketData_->send_buffer_ << '\n';
             break;
     }
 #endif
