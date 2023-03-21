@@ -137,13 +137,13 @@ void server::simple_lobby::main_menu_request_handler(
 
 }
 
-void server::simple_lobby::leave_unauth_user(const anet::socket_data_ptr &socketData)
+void server::simple_lobby::leave_unauth_user(anet::socket_data_ptr socketData)
 {
     lobbyDataBase_.erase_active_ip(socketData);
     socketData->shutdown();
 }
 
-void server::simple_lobby::leave_auth_user(const anet::socket_data_ptr &socketData)
+void server::simple_lobby::leave_auth_user(anet::socket_data_ptr socketData)
 {
     lobbyDataBase_.erase_active_ip(socketData);
     lobbyDataBase_.erase_active_name(socketData);
