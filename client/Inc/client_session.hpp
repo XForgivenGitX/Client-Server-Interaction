@@ -166,11 +166,18 @@ namespace client
         {
             io__::post(socketData->socket_.get_executor(), [&]{receive_message(socketData);});
             std::string msgBuff;
-            while (true)
+            bool leave = false;
+            while (!leave)
             {
                 std::getline(std::cin, msgBuff);
                 if(msgBuff.empty()) continue;
-                socketData->send_buffer_ = common::assemble_frame(command::SEND_MESSAGE, {msgBuff});
+                if(msgBuff == "-q")
+                {
+                    socketData->send_buffer_ = common::assemble_frame(command::DETACH_ROOM_REQ, {msgBuff});
+                    leave = true;
+                }
+                else 
+                    socketData->send_buffer_ = common::assemble_frame(command::SEND_MESSAGE, {msgBuff});
                 anet::send_receive::send(socketData, {send_message_handler, this});
             }
         }
@@ -194,6 +201,11 @@ namespace client
                 std::cout << args[0] << '\n';
                 receive_message(socketData);
                 break;
+            
+            case common::command::DETACH_ROOM_RESP:
+                identify_and_send_command(socketData);
+                break;
+                
             default:
                 break;
             }
@@ -205,6 +217,7 @@ namespace client
             {
                 socketData->shutdown();
             }
+
         }
     };
 }

@@ -29,9 +29,9 @@ namespace server
                         
     {
         using activeMembers = std::unordered_map<anet::socket_data_ptr, group_chat_member_ptr>;
-    
-    //private:
         lobby_ptr myLobby_;
+    
+    private:
         activeMembers activeMembers_;
         
     private:
@@ -41,7 +41,7 @@ namespace server
         chat_room(const lobby_ptr& myLobby);
         void enter_member(const anet::socket_data_ptr& socketData, group_chat_member_ptr&& newMember);
         void send_all_members(const std::string& msg);
-        void leave_member(anet::socket_data_ptr socketData);
+        void leave_member(anet::socket_data_ptr socketData, std::string&&);
     };
     typedef std::shared_ptr<chat_room> chat_room_ptr;
 

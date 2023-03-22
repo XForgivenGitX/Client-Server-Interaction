@@ -22,12 +22,12 @@ void server::chat_room::send_all_members(const std::string &msg)
     }
 }
 
-void server::chat_room::leave_member(anet::socket_data_ptr socketData)
+void server::chat_room::leave_member(anet::socket_data_ptr socketData, std::string&& lastMsg)
 {
-    std::cout << activeMembers_.empty() << '\n';//debug
-    std::lock_guard lock(mutex);
+    mutex.lock();
     activeMembers_.erase(socketData);
-    std::cout << activeMembers_.empty() << '\n';//debug
+    mutex.unlock();
+    send_all_members(lastMsg);
 }
 
 server::simple_group_chat_member::simple_group_chat_member(const chat_room_ptr &myRoom, const name_t &name)
@@ -81,18 +81,14 @@ void server::simple_group_chat_member::receive_message_handler(anet::socket_data
 
 void server::simple_group_chat_member::forced_leave(anet::socket_data_ptr socketData)
 {
-    std::cout << myRoom_->activeMembers_.empty() << '\n';//debug
-    myRoom_->leave_member(socketData);
-    std::cout << myRoom_->activeMembers_.empty() << '\n';//debug
-    //myRoom_->send_all_members(std::string(" left the chat due to a bad connection."));
     myRoom_->myLobby_->leave_auth_user(socketData);
+    myRoom_->leave_member(socketData, name_ + std::string(" left the chat due to a bad connection."));  
 }
 
 void server::simple_group_chat_member::leave_room(anet::socket_data_ptr socketData)
 {
-    myRoom_->leave_member(socketData);
     myRoom_->myLobby_->main_menu_response(socketData, common::command::DETACH_ROOM_RESP);
-    myRoom_->send_all_members(name_ + std::string(" left the chat."));
+    myRoom_->leave_member(socketData, name_ + std::string(" left the chat."));  
 }
 
 std::string server::simple_group_chat_member::configure_message(const std::string &usersMessage) const

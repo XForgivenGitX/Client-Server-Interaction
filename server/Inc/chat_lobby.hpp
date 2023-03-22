@@ -6,8 +6,10 @@ namespace server
                             public boost::noncopyable, 
                             public std::enable_shared_from_this<simple_lobby>
     {
-    private:
+    
         db::lobby_database lobbyDataBase_{};
+    
+    private:
         db::server_database *serverDataBase_;
 
     public:
