@@ -20,18 +20,15 @@
 #include <boost/core/noncopyable.hpp>
 
 /////////////////////////////////////
-namespace{ namespace io__ = boost::asio;}
+namespace io__ = boost::asio;
 typedef std::string data_t;
-enum class tags
-{
-    send_tag, receive_tag
-};
 
 #define FRAME_MAX_LENGHT  128
 #define FRAME_MIN_LENGHT  1
 //#define NETWORK_MODULE_DEBUG
 #define NETWORK_MODULE_RELEASE
 //#define NETWORK_ENABLE_HANDLER_TRACKING
+
 /////////////////////////////////////
 //first headers
 #include <network/utility.hpp>

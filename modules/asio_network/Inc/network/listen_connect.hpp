@@ -5,14 +5,18 @@ namespace anet
 {
     struct connection
     {
-        typedef utility::task_wrapped<void(socket_data_endpoint_ptr &&, 
+        typedef utility::task_wrapped<void(socket_data_ptr&, 
                                     const boost::system::error_code &)> callback_func_t;
 
     public:
-        static void connection_request(socket_data_endpoint_ptr &&endPoint, 
-                                        callback_func_t &&);
-        static void async_connection_request(io__::any_io_executor , 
-                                    socket_data_endpoint_ptr &&, callback_func_t &&);
+        static void connection_request(socket_data_ptr socketData, 
+                                    const end_point_wrapper &endPoint, 
+                                        callback_func_t &&handler);
+        
+        static void async_connection_request(const io__::any_io_executor& ios, 
+                                            socket_data_ptr socketData, 
+                                            const end_point_wrapper &endPoint, 
+                                                    callback_func_t &&handler);
     };
 
     //_____
@@ -24,10 +28,8 @@ namespace anet
         socket_data_ptr socketData_;
 
     public:
-        explicit tcp_listener(io__::any_io_executor ios, 
+        explicit tcp_listener(const io__::any_io_executor& ios, 
                                     const end_point_wrapper &endPoint);
-        explicit tcp_listener(io__::any_io_executor ios, 
-                                    end_point_wrapper &&endPoint);
     };
     typedef std::unique_ptr<tcp_listener> tcp_listener_ptr;
 
@@ -54,6 +56,7 @@ namespace anet
     public:
         explicit callback_function_wrapper(tcp_listener_ptr &&listener, 
                                             callback_func_t &&handler);
+        
         void operator()(const boost::system::error_code &error) noexcept;
     };
 }

@@ -95,7 +95,7 @@ namespace utility
         }
 
     public:
-        auto operator()(Args &&...args) const noexcept
+        decltype(auto) operator()(Args &&...args) const noexcept
         {
             using detail::dummy;
             try

@@ -42,7 +42,7 @@ void server::simple_group_chat_member::start_communication(anet::socket_data_ptr
     myRoom_->send_all_members(message + name_);
 }
 
-void server::simple_group_chat_member::start_communication_handler(anet::socket_data_ptr socketData, const boost::system::error_code &error) noexcept
+void server::simple_group_chat_member::start_communication_handler(anet::socket_data_ptr& socketData, const boost::system::error_code &error) noexcept
 {
     if (error)
     {
@@ -55,7 +55,7 @@ void server::simple_group_chat_member::start_communication_handler(anet::socket_
     }
 }
 
-void server::simple_group_chat_member::receive_message_handler(anet::socket_data_ptr socketData, const boost::system::error_code &error) noexcept
+void server::simple_group_chat_member::receive_message_handler(anet::socket_data_ptr& socketData, const boost::system::error_code &error) noexcept
 {
     auto splited_frame = parse_and_chek_errors(socketData->receive_buffer_, error);
     if (!splited_frame)
@@ -99,7 +99,7 @@ std::string server::simple_group_chat_member::configure_message(const std::strin
     return configuredMessage.str();
 }
 
-void server::simple_group_chat_member::send_message_handler(anet::socket_data_ptr socketData, const boost::system::error_code &error) noexcept
+void server::simple_group_chat_member::send_message_handler(anet::socket_data_ptr& socketData, const boost::system::error_code &error) noexcept
 {
     if (error)
     {

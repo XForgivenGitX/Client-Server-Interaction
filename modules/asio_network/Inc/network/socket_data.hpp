@@ -10,7 +10,7 @@ namespace anet
         data_t send_buffer_, receive_buffer_;
     
     public:   
-        explicit socket_data(io__::any_io_executor);
+        explicit socket_data(const io__::any_io_executor&);
         ~socket_data();
     
     public: 
@@ -32,28 +32,6 @@ namespace anet
         end_point_wrapper(){}
     };
     
-//_____
-    
-    struct socket_data_endpoint : boost::noncopyable
-    {
-    public:   
-        socket_data_ptr socketData_;
-        end_point_wrapper endPoint_;
-
-    public:
-        explicit socket_data_endpoint(socket_data_ptr socketData, end_point_wrapper& endPoint);
-    
-    public:
-        boost::system::error_code connect() const noexcept;
-    };
-    typedef std::unique_ptr<socket_data_endpoint> socket_data_endpoint_ptr;
-    
-    socket_data_endpoint_ptr make_socket_data(socket_data_ptr& socketData, 
-                                            end_point_wrapper& endPoint);
-    
-    socket_data_endpoint_ptr make_socket_data(io__::any_io_executor ios, 
-                                            end_point_wrapper& endPoint);
-    
-    socket_data_ptr make_socket_data(io__::any_io_executor ios);
+    socket_data_ptr make_socket_data(const io__::any_io_executor& ios);
 
 }

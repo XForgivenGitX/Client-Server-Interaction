@@ -1,14 +1,11 @@
 #include <server_module.hpp>
 using namespace common;
 
-server::simple_lobby::simple_lobby(db::server_database* serverDataBase)
-    : serverDataBase_(serverDataBase) {}
-
 void server::simple_lobby::authorization(anet::socket_data_ptr socketData)
 {
     auto userIp = socketData->socket_.remote_endpoint().address().to_string();
     lobbyDataBase_.insert_active_ip(socketData, userIp);
-    if (serverDataBase_->is_register_user(userIp))
+    if (server_control_block::get_mutable_instance().serverDataBase_.is_register_user(userIp))
         socketData->send_buffer_ = common::assemble_frame(command::LOG_IN_REQ);
     else
         socketData->send_buffer_ = common::assemble_frame(command::REGISTER_REQ);
@@ -22,7 +19,7 @@ void server::simple_lobby::main_menu_response(anet::socket_data_ptr socketData, 
 }
 
 void server::simple_lobby::auth_request_handler(
-    anet::socket_data_ptr socketData, const boost::system::error_code &error) noexcept
+    anet::socket_data_ptr& socketData, const boost::system::error_code &error) noexcept
 {
     if(error)
     { 
@@ -33,7 +30,7 @@ void server::simple_lobby::auth_request_handler(
 }
 
 void server::simple_lobby::auth_responce_handler(
-    anet::socket_data_ptr socketData, const boost::system::error_code &error) noexcept
+    anet::socket_data_ptr& socketData, const boost::system::error_code &error) noexcept
 {
     auto msg = parse_and_chek_errors(socketData->receive_buffer_, error);
     if (!msg)
@@ -48,9 +45,9 @@ void server::simple_lobby::auth_responce_handler(
     switch (cmd)
     {
     case command::REGISTER_RESP:
-        if (!serverDataBase_->is_contains_user_name(name))
+        if (!server_control_block::get_mutable_instance().serverDataBase_.is_contains_user_name(name))
         {
-            serverDataBase_->add_user(lobbyDataBase_.get_active_ip(socketData), {name, pass});
+            server_control_block::get_mutable_instance().serverDataBase_.add_user(lobbyDataBase_.get_active_ip(socketData), {name, pass});
             lobbyDataBase_.insert_active_name(socketData, name);
             main_menu_response(socketData, command::SUCCESS_REG_RESP);
         }
@@ -62,7 +59,7 @@ void server::simple_lobby::auth_responce_handler(
         break;
 
     case command::LOG_IN_RESP:
-        if (serverDataBase_->is_valid_user_data(lobbyDataBase_.get_active_ip(socketData),
+        if (server_control_block::get_mutable_instance().serverDataBase_.is_valid_user_data(lobbyDataBase_.get_active_ip(socketData),
                                                           args[NAME_INDEX], args[PASS_INDEX]))
         {
             lobbyDataBase_.insert_active_name(socketData, name);
@@ -83,7 +80,7 @@ void server::simple_lobby::auth_responce_handler(
     }
 }
 void server::simple_lobby::main_menu_responce_handler(
-    anet::socket_data_ptr socketData, const boost::system::error_code &error) noexcept
+    anet::socket_data_ptr& socketData, const boost::system::error_code &error) noexcept
 {
     if(error)
     { 
@@ -94,7 +91,7 @@ void server::simple_lobby::main_menu_responce_handler(
 }
 
 void server::simple_lobby::main_menu_request_handler(
-    anet::socket_data_ptr socketData, const boost::system::error_code &error) noexcept
+    anet::socket_data_ptr& socketData, const boost::system::error_code &error) noexcept
 {
     auto msg = parse_and_chek_errors(socketData->receive_buffer_, error);
     if (!msg)
@@ -107,7 +104,7 @@ void server::simple_lobby::main_menu_request_handler(
     switch(cmd)
     {
         case command::CREATE_ROOM_REQ:
-            if(!lobbyDataBase_.is_contains_room_name(name) && !serverDataBase_->is_contains_user_name(name))
+            if(!lobbyDataBase_.is_contains_room_name(name) && !server_control_block::get_mutable_instance().serverDataBase_.is_contains_user_name(name))
             {
                 auto newRoom = std::make_shared<server::chat_room>(shared_from_this());
                 lobbyDataBase_.insert_room(newRoom, name);

@@ -9,6 +9,8 @@ namespace server
         io__::thread_pool pool_;
         io__::io_context signalIos_;
         lobby_ptr lobby_;
+        
+    public:
         db::server_database serverDataBase_{};
         
     public:

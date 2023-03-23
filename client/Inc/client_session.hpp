@@ -12,13 +12,13 @@ namespace client
         anet::socket_data_ptr socketData_;
 
     public:
-        client_session(io__::io_context &ios, anet::end_point_wrapper endPoint)
+        client_session(io__::io_context &ios, const anet::end_point_wrapper& endPoint)
             : socketData_(anet::make_socket_data(ios.get_executor()))
         {
-            anet::connection::connection_request(anet::make_socket_data(socketData_, endPoint), {&connection_handler, this});
+            anet::connection::connection_request(socketData_, endPoint, {&connection_handler, this});
         }
 
-        void connection_handler(anet::socket_data_endpoint_ptr &&socketDataEndPoint, const boost::system::error_code &error)
+        void connection_handler(anet::socket_data_ptr &socketData, const boost::system::error_code &error)
         {
             if (error)
             {
@@ -31,7 +31,7 @@ namespace client
             }
         }
 
-        void authorization_handler(anet::socket_data_ptr socketData, const boost::system::error_code &error)
+        void authorization_handler(anet::socket_data_ptr& socketData, const boost::system::error_code &error)
         {
             auto resp = common::disassemble_frame(socketData->receive_buffer_);
             if (error || !resp)
@@ -73,7 +73,7 @@ namespace client
             }
         }
 
-        void auth_response_handler(anet::socket_data_ptr socketData, const boost::system::error_code &error)
+        void auth_response_handler(anet::socket_data_ptr& socketData, const boost::system::error_code &error)
         {
             anet::send_receive::receive(socketData_, {authorization_handler, this});
         }
@@ -121,12 +121,12 @@ namespace client
             identify_and_send_command(socketData);
         }
 
-        void lobby_request_handler(anet::socket_data_ptr socketData, const boost::system::error_code &error)
+        void lobby_request_handler(anet::socket_data_ptr& socketData, const boost::system::error_code &error)
         {
             anet::send_receive::receive(socketData_, {lobby_responce_handler, this});
         }
 
-        void lobby_responce_handler(anet::socket_data_ptr socketData, const boost::system::error_code &error)
+        void lobby_responce_handler(anet::socket_data_ptr& socketData, const boost::system::error_code &error)
         {
             auto resp = common::disassemble_frame(socketData->receive_buffer_);
             if (error || !resp)
@@ -186,7 +186,7 @@ namespace client
         {
             anet::send_receive::receive(socketData_, {receive_message_handler, this});
         }
-        void receive_message_handler(anet::socket_data_ptr socketData, const boost::system::error_code &error)
+        void receive_message_handler(anet::socket_data_ptr& socketData, const boost::system::error_code &error)
         {
             auto resp = common::disassemble_frame(socketData->receive_buffer_);
             if (error || !resp)
@@ -211,7 +211,7 @@ namespace client
             }
         }
 
-        void send_message_handler(anet::socket_data_ptr socketData, const boost::system::error_code &error)
+        void send_message_handler(anet::socket_data_ptr& socketData, const boost::system::error_code &error)
         {
             if (error)
             {

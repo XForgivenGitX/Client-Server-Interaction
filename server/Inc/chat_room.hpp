@@ -19,7 +19,7 @@ namespace server
     struct group_chat_member
     {
         virtual void start_communication(anet::socket_data_ptr socketData) = 0;
-        virtual void send_message_handler(anet::socket_data_ptr socketData, 
+        virtual void send_message_handler(anet::socket_data_ptr& socketData, 
                                     const boost::system::error_code &error) noexcept = 0;
         virtual ~group_chat_member() = default;
     };
@@ -57,10 +57,10 @@ namespace server
         simple_group_chat_member(const chat_room_ptr& myRoom, const name_t& name) ;
         
         void start_communication(anet::socket_data_ptr socketData) override;
-        void start_communication_handler(anet::socket_data_ptr socketData, const boost::system::error_code &error) noexcept;
-        void receive_message_handler(anet::socket_data_ptr socketData, const boost::system::error_code &error) noexcept;
+        void start_communication_handler(anet::socket_data_ptr& socketData, const boost::system::error_code &error) noexcept;
+        void receive_message_handler(anet::socket_data_ptr& socketData, const boost::system::error_code &error) noexcept;
         std::string configure_message(const std::string& usersMessage) const;
-        void send_message_handler(anet::socket_data_ptr socketData, const boost::system::error_code &error) noexcept override;
+        void send_message_handler(anet::socket_data_ptr& socketData, const boost::system::error_code &error) noexcept override;
         void forced_leave(anet::socket_data_ptr socketData);
         void leave_room(anet::socket_data_ptr socketData);
     };
