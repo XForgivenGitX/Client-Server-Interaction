@@ -9,7 +9,8 @@
                 "C:\\msys64\\mingw64\\lib\\gcc\\x86_64-w64-mingw32\\12.2.0\\include",
                 "${workspaceFolder}\\modules\\asio_network\\Inc",
                 "${workspaceFolder}\\server\\Inc",
-                "${workspaceFolder}\\client\\Inc"
+                "${workspaceFolder}\\client\\Inc",
+                "${workspaceFolder}\\modules\\common\\Inc"
             ],
             "defines": [
                 "_DEBUG",

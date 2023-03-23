@@ -1,6 +1,6 @@
 #include <network_module.hpp>
 
-anet::socket_data::socket_data(io__::io_context &ios) : socket_(ios)
+anet::socket_data::socket_data(const io__::any_io_executor& ios) : socket_(ios)
 {
 }
 
@@ -13,40 +13,19 @@ void anet::socket_data::shutdown() noexcept
         socket_.shutdown(io__::ip::tcp::socket::shutdown_both);
         socket_.close();
     }
-    catch (const boost::system::system_error &e)
+    catch (const boost::system::system_error &ex)
     {
-        std::cerr << e.what() << '\n';
-#ifdef NETWORK_MODULE_RELEASE
-        assert(false);
-#endif
+        std::cerr << "@thread:" << boost::this_thread::get_id() << ": " << ex.what() << '\n';
+        std::terminate();
     }
 }
 
 anet::socket_data::~socket_data() { shutdown(); }
 
-boost::system::error_code anet::socket_data_endpoint::connect() const noexcept
-{
-    if (socketData_->socket_.is_open())
-        return {};
-    boost::system::error_code error;
-    socketData_->socket_.connect(endPoint_.point_, error);
-    return error;
-}
 
-anet::socket_data_endpoint::socket_data_endpoint(socket_data_ptr socketData, end_point_wrapper &endPoint)
-    : socketData_(socketData), endPoint_(std::move(endPoint))
+anet::socket_data_ptr anet::make_socket_data(const io__::any_io_executor& ios)
 {
-}
-
-anet::socket_data_endpoint_ptr anet::make_socket_data(io__::io_context &ios, end_point_wrapper &endPoint)
-{
-    return utility::safe_make_unique<socket_data_endpoint>
-        (utility::safe_make_shared<socket_data>(ios), endPoint);
-}
-
-anet::socket_data_ptr anet::make_socket_data(io__::io_context &ios)
-{
-    return utility::safe_make_shared<socket_data>(ios);
+    return std::make_shared<socket_data>(ios);
 }
 
 anet::end_point_wrapper::end_point_wrapper(unsigned short port, const std::string &address)

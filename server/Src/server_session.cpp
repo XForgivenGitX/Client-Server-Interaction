@@ -1,44 +1,65 @@
 #include <server_module.hpp>
+using namespace common;
 
-server::server_session::server_session(io__::io_context &ios, unsigned short port)
-    : ios_(ios), endPoint_(port, io__::ip::tcp::v4()) {}
 
-void server::server_session::start()
+server::server_control_block::server_control_block()
+    : pool_(boost::thread::hardware_concurrency()), lobby_(std::make_shared<simple_lobby>(&serverDataBase_))
 {
-    accept_connections(utility::safe_make_unique<anet::tcp_listener>(ios_, endPoint_));
-    std::cout << "Server was started on " << endPoint_.point_.port() << " port.\n";
 }
 
-void server::server_session::accepted_connection_handler(anet::tcp_listener_ptr &&listener, const boost::system::error_code &error) noexcept
+void server::server_control_block::start_accepting_connections(unsigned short port)
 {
-    auto newSocket = std::move(listener->socketData_);
-    listener->socketData_ = utility::safe_make_shared<anet::socket_data>(ios_);
+    auto tcpListener = std::make_unique<anet::tcp_listener> 
+        (pool_.get_executor(), anet::end_point_wrapper{port, io__::ip::tcp::v4()});
+    auto& listenerSocket = tcpListener->socketData_;
+    accept_connections(std::move(tcpListener)); 
+    io__::signal_set set(signalIos_.get_executor(), SIGINT, SIGTERM, SIGABRT);
+    set.async_wait(std::bind(&server_control_block::signal_handler, 
+        this, listenerSocket, std::placeholders::_1, 
+        std::placeholders::_2));
+    signalIos_.run();
+}
+
+void server::server_control_block::accept_connections(anet::tcp_listener_ptr &&listener) noexcept
+{
+#ifdef SERVER_ENABLE_HANDLER_TRACKING
+    std::cout << "@server=" << this << ": listen\n";
+#endif
+    anet::listen::accepting_connection(std::move(listener),
+                                       {&server_control_block::accepted_connection_handler, this});
+}
+
+void server::server_control_block::accepted_connection_handler(anet::tcp_listener_ptr &&listener, const boost::system::error_code &error) noexcept
+{
     if (error)
     {
-        std::cerr << "Connection error, system:" << error.message() << ".\n";
-        newSocket->shutdown();
+        std::cerr << "@server=" << this << ": @" << error.message() << '\n';
+        listener->socketData_->shutdown();
     }
     else
-    { 
-#ifdef SERVER_MODULE_DEBUG
-        std::cout << "Successful connection. System: "
-                  << error.message()
-                  << ". IPv4: "
-                  << newSocket->socket_.remote_endpoint().address().to_string()
-                  << '\n';
+    {
+        auto newSocket = std::make_shared<anet::socket_data>(pool_.get_executor());
+        std::swap(newSocket, listener->socketData_);
+
+#ifdef SERVER_ENABLE_HANDLER_TRACKING
+        std::cout << "@server=" << this << ": @connect " << newSocket->socket_.remote_endpoint() << '\n';
 #endif
-        anet::send_receive::receive(newSocket, {authorization_handler, this});
-    
+        io__::post(pool_.get_executor(), std::bind(lobby::authorization, lobby_, newSocket));
+        accept_connections(std::move(listener));
     }
-    accept_connections(std::move(listener));
 }
 
-void server::server_session::accept_connections(anet::tcp_listener_ptr &&listener) noexcept
+void server::server_control_block::join()
 {
-    anet::listen::accepting_connection(std::move(listener), {accepted_connection_handler, this});
+    pool_.join();
 }
 
-void server::server_session::authorization_handler(anet::socket_data_ptr socketData, const boost::system::error_code &error) noexcept
+void server::server_control_block::signal_handler(anet::socket_data_ptr listenerSocket, const boost::system::error_code error, int)
 {
-    error ? socketData->shutdown() : room_.enter_user(socketData, utility::safe_make_shared<simple_chat_user>(room_, socketData->receive_buffer_));
+#ifdef SERVER_ENABLE_HANDLER_TRACKING
+            std::cout << "@server=" << this << ": @called signal_handler\n";
+#endif
+    pool_.stop();
+    listenerSocket->shutdown();
+    lobby_->leave_all_users();
 }

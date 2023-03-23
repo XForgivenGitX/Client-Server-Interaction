@@ -9,7 +9,8 @@
 #define BOOST_ASIO_NO_DEPRECATED
 //#define BOOST_ASIO_ENABLE_HANDLER_TRACKING
 #define BOOST_ASIO_DEFAULT_LINKED_LIBS
-#define BOOST_NO_ANSI_APIS  
+#define BOOST_NO_ANSI_APIS 
+
 /////////////////////////////////////
 #include <boost/system/error_code.hpp>
 #include <boost/asio/write.hpp>
@@ -19,17 +20,14 @@
 #include <boost/core/noncopyable.hpp>
 
 /////////////////////////////////////
-namespace{ namespace io__ = boost::asio;}
+namespace io__ = boost::asio;
 typedef std::string data_t;
-enum class tags
-{
-    send_tag, receive_tag
-};
 
 #define FRAME_MAX_LENGHT  128
 #define FRAME_MIN_LENGHT  1
 //#define NETWORK_MODULE_DEBUG
-//#define NETWORK_MODULE_RELEASE
+#define NETWORK_MODULE_RELEASE
+//#define NETWORK_ENABLE_HANDLER_TRACKING
 
 /////////////////////////////////////
 //first headers
@@ -39,3 +37,6 @@ enum class tags
 //second headers
 #include <network/send_receive.hpp>
 #include <network/listen_connect.hpp>
+
+//TODO
+//1.error handler
