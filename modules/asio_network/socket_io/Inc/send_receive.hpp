@@ -4,8 +4,8 @@
 #include <boost/asio/write.hpp>
 #include <boost/asio/read.hpp>
 
-#include "utility.hpp"
-#include "socket_data.hpp"
+#include <utility.hpp>
+#include <socket_data.hpp>
 
 namespace anet
 {
@@ -15,7 +15,7 @@ namespace anet
     struct send_receive
     {
         typedef utility::task_wrapped<void(socket_data_ptr&, 
-                                const boost::system::error_code &)> callback_func_t;
+                                const error_code &)> callback_func_t;
 
     public:
         static void send(socket_data_ptr socketData, callback_func_t &&handler);
@@ -25,14 +25,14 @@ namespace anet
 
     private:
         struct callback_function_wrapper;
-        typedef std::function<void(const boost::system::error_code &, 
+        typedef std::function<void(const error_code &, 
                                     std::size_t, callback_function_wrapper&)> called_function;
         
-        static void send_called_function(const boost::system::error_code &error, 
+        static void send_called_function(const error_code &error, 
                                                     std::size_t bytesTransferred, 
                                                         callback_function_wrapper& wrapper);
         
-        static void receive_called_function(const boost::system::error_code &error, 
+        static void receive_called_function(const error_code &error, 
                                                     std::size_t bytesTransferred, 
                                                         callback_function_wrapper& wrapper);
     private:
@@ -49,7 +49,7 @@ namespace anet
     public:
         explicit callback_function_wrapper(socket_data_ptr& socketData, 
                                         callback_func_t &&handler, called_function&& call);
-        void operator()(const boost::system::error_code &error, 
-                                        std::size_t bytesTransferred);
+        void operator()(const error_code &error, 
+                                std::size_t bytesTransferred);
     };
 }

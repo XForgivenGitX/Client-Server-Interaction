@@ -3,6 +3,7 @@
 #include <memory>
 #include <optional>
 #include <functional>
+#include <iostream>
 
 #include <boost/type_index.hpp>
 #include <boost/thread/thread.hpp>
@@ -41,7 +42,7 @@ namespace utility::detail
     public:
         call_from_object(F (Obj::*fptr), Obj *caller)
             : fptr_(fptr), caller_(caller) {}
-        dectype(auto) operator()(Args... args)
+        decltype(auto) operator()(Args... args)
         {
             return (caller_->*fptr_)(std::forward<Args>(args)...);
         }

@@ -83,6 +83,7 @@
         "regex": "cpp",
         "unordered_set": "cpp",
         "shared_mutex": "cpp",
-        "strstream": "cpp"
+        "strstream": "cpp",
+        "fstream": "cpp"
     }
 }

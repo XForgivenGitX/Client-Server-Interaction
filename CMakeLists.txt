@@ -18,8 +18,10 @@ project(QuickChat)
 set (CMAKE_CXX_STANDARD 20) 
 set (RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
+enable_testing()
 add_subdirectory(modules/asio_network)
-add_subdirectory(modules/common)
+add_subdirectory(modules/common/shared)
+add_subdirectory(modules/common/tests)
 #add_subdirectory(server)
 #add_subdirectory(client)
 
