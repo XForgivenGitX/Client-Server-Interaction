@@ -11,15 +11,17 @@
 ############################################
 
 cmake_minimum_required(VERSION 3.0)
-project(LocalChat)
+# set(CMAKE_CXX_COMPILER "C:/msys64/mingw64/bin/g++.exe")
+# set(CMAKE_C_COMPILER "C:/msys64/mingw64/bin/g++.exe")
+project(QuickChat)
 
 set (CMAKE_CXX_STANDARD 20) 
 set (RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 add_subdirectory(modules/asio_network)
 add_subdirectory(modules/common)
-add_subdirectory(server)
-add_subdirectory(client)
+#add_subdirectory(server)
+#add_subdirectory(client)
 
 ############################################
 

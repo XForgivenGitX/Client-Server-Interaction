@@ -10,7 +10,6 @@ namespace server
         db::lobby_database lobbyDataBase_{};
 
     public:
-        simple_lobby(db::server_database *);
         void authorization(anet::socket_data_ptr socketData) override;
         void main_menu_response(anet::socket_data_ptr socketData, common::command) override;
         

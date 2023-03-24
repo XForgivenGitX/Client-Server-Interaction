@@ -32,7 +32,7 @@ typedef std::string data_t;
 /////////////////////////////////////
 //first headers
 #include <network/utility.hpp>
-#include <network/socket_data.hpp>
+//#include <network/socket_data.hpp>
 
 //second headers
 #include <network/send_receive.hpp>

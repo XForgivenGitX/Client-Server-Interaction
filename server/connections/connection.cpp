@@ -3,7 +3,7 @@ using namespace common;
 
 
 server::server_control_block::server_control_block()
-    : pool_(boost::thread::hardware_concurrency()), lobby_(std::make_shared<simple_lobby>(&serverDataBase_))
+    : pool_(boost::thread::hardware_concurrency()), lobby_(std::make_shared<simple_lobby>())
 {
 }
 

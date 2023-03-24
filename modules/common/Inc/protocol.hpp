@@ -15,7 +15,7 @@
 
 namespace common
 {
-    enum class protocol : unsigned
+    enum class limits : unsigned
     {
         MESSAGE_LOW_LENGHT = 1,
         MESSAGE_HIGH_LENGHT = 50,
@@ -24,6 +24,7 @@ namespace common
         NAME_LOW_LENGHT = 5,
         NAME_HIGH_LENGHT = 20
     };
+    
     enum class command : unsigned
     {
         LOG_IN_REQ,
@@ -36,6 +37,30 @@ namespace common
         REGISTER_RESP,
         SUCCESS_REG_RESP,
 
+        CREATE_ROOM_REQ,
+        SUCCESS_CREATE_ROOM_RESP,
+        ERROR_CREATE_ROOM_RESP,
+
+        JOIN_ROOM_REQ,
+        SUCCESS_JOIN_ROOM_RESP,
+        ERROR_JOIN_ROOM_RESP,
+
+        SEND_MESSAGE,
+        DETACH_ROOM_REQ,
+        DETACH_ROOM_RESP,
+    };
+
+    enum class ncommand : unsigned
+    {
+        REGISTER_REQ,
+        LOG_IN_REQ,
+        
+        ERROR_REGISTER_RESP,
+        ERROR_LOG_IN_RESP,
+
+        SUCCESS_REGISTER_RESP,
+        SUCCESS_LOG_IN_RESP,
+        
         CREATE_ROOM_REQ,
         SUCCESS_CREATE_ROOM_RESP,
         ERROR_CREATE_ROOM_RESP,

@@ -1,5 +1,7 @@
 #pragma once
-#include <server_module.hpp>
+#include <boost/asio/thread_pool.hpp>
+#include <boost/noncopyable.hpp>
+#include <boost/serialization/singleton.hpp>
 
 namespace server
 {

@@ -1,8 +1,17 @@
 #pragma once
-#include <network_module.hpp>
+#include <functional>
+
+#include <boost/asio/write.hpp>
+#include <boost/asio/read.hpp>
+
+#include "utility.hpp"
+#include "socket_data.hpp"
 
 namespace anet
 {
+    constexpr uint16_t FRAME_MAX_LENGHT = 128;
+    constexpr uint16_t FRAME_MIN_LENGHT = 1;
+    
     struct send_receive
     {
         typedef utility::task_wrapped<void(socket_data_ptr&, 

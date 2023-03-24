@@ -1,5 +1,7 @@
 #pragma once
-#include <network_module.hpp>
+
+#include "utility.hpp"
+#include "socket_data.hpp"
 
 namespace anet
 {
@@ -19,8 +21,7 @@ namespace anet
                                                     callback_func_t &&handler);
     };
 
-    //_____
-
+    
     struct tcp_listener : boost::noncopyable
     {
     public:
@@ -33,7 +34,6 @@ namespace anet
     };
     typedef std::unique_ptr<tcp_listener> tcp_listener_ptr;
 
-    //_____
 
     struct listen
     {

@@ -1,5 +1,17 @@
 #pragma once
-#include <network_module.hpp>
+#include <string>
+#include <iostream>
+
+#include <boost/asio/io_service.hpp>
+#include <boost/core/noncopyable.hpp>
+#include <boost/system/error_code.hpp>
+#include <boost/asio/ip/tcp.hpp>
+
+namespace io__ = boost::asio;
+typedef std::string transf_data;
+typedef std::string addr_t;
+typedef unsigned short port_t;
+typedef boost::system::error_code error_code;
 
 namespace anet
 {
@@ -7,7 +19,7 @@ namespace anet
     {
     public:    
         io__::ip::tcp::socket socket_;
-        data_t send_buffer_, receive_buffer_;
+        transf_data send_buffer_, receive_buffer_;
     
     public:   
         explicit socket_data(const io__::any_io_executor&);
@@ -24,11 +36,11 @@ namespace anet
     {
     public:   
         io__::ip::tcp::endpoint point_;
-        boost::system::error_code error_;
+        error_code error_;
     
     public:    
-        end_point_wrapper(unsigned short port, const std::string& address);
-        end_point_wrapper(unsigned short port, const io__::ip::tcp& address);
+        end_point_wrapper(port_t port, const addr_t& address);
+        end_point_wrapper(port_t port, const io__::ip::tcp& address);
         end_point_wrapper(){}
     };
     
