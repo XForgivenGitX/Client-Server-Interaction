@@ -2,7 +2,7 @@
 
 cmake_minimum_required(VERSION 3.5)
 
-set(TESTS_NAME test-protocol)
+set(TESTS_NAME ${PROJECT_NAME}-test-protocol)
 
 set(${TESTS_NAME}_SRC
     protocol.cpp
@@ -30,7 +30,7 @@ target_compile_options(${TESTS_NAME} PRIVATE
     )
 target_link_libraries(${TESTS_NAME} PRIVATE 
     ${Boost_LIBRARIES}
-    quickchat-shared
+    ${PROJECT_NAME}-shared
     )
 
 add_test(NAME ${TESTS_NAME} COMMAND ${TESTS_NAME})

@@ -13,8 +13,9 @@ namespace common
         constexpr unsigned COMMAND_INDEX = 1;
         constexpr unsigned ARGUMENT_INDEX = 2;
         constexpr unsigned INDET_VALUE = 1;
-        constexpr unsigned NAME_INDEX = 0;
-        constexpr unsigned PASS_INDEX = 1;
+        constexpr unsigned USER_NAME_INDEX = 0;
+        constexpr unsigned USER_PASS_INDEX = 1;
+        constexpr unsigned ROOM_NAME_INDEX = 0;
     }
 
     namespace limits
@@ -27,6 +28,12 @@ namespace common
         constexpr unsigned NAME_HIGH_LENGHT = 20;
     }
 
+    enum class room_access : unsigned
+    {
+        PUBLIC,
+        PRIVATE
+    };
+    
     enum class command : unsigned
     {
         REGISTER,

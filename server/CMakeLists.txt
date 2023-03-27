@@ -2,7 +2,7 @@
 
 cmake_minimum_required(VERSION 3.5)
 
-set(EXEC_NAME quickchat-server)
+set(EXEC_NAME ${PROJECT_NAME}-server)
 
 set(${EXEC_NAME}_DIR_CONNECTIONS connections)
 set(${EXEC_NAME}_DIR_DATABASE database)
@@ -47,8 +47,8 @@ target_include_directories(${EXEC_NAME} PRIVATE
 
 target_link_libraries(${EXEC_NAME} PRIVATE 
     ${Boost_LIBRARIES} 
-    quickchat-shared
-    quickchat-network
+    ${PROJECT_NAME}-shared
+    ${PROJECT_NAME}-network
     )
 
 ############################################################

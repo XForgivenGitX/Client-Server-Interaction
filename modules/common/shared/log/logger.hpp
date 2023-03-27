@@ -9,8 +9,6 @@
 #include <boost/log/sources/record_ostream.hpp>
 #include <boost/log/utility/setup/console.hpp>
 
-// #define ENABLE_FILE_LOGGING
-
 namespace lg
 {
     namespace lg = boost::log;
@@ -44,6 +42,8 @@ namespace lg
     }
     
     const char *address_cat(const char *lhs, const void *rhs);
+    std::string boolalpha_cast(bool rhs);
     void init_logger();
+
 
 }

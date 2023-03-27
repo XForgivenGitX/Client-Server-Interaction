@@ -25,7 +25,7 @@ namespace server
     };
     typedef std::unique_ptr<group_chat_member> group_chat_member_ptr;
 
-    struct chat_room :  public boost::noncopyable
+    struct chat_room : public boost::noncopyable
                         
     {
         using activeMembers = std::unordered_map<anet::socket_data_ptr, group_chat_member_ptr>;

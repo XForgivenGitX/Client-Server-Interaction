@@ -43,7 +43,7 @@ namespace db
         typedef std::map<name_t, user_data> users_tree;
         typedef users_tree::const_iterator users_tree_it;
         
-        typedef std::set<name_t> names_tree;
+        typedef std::set<name_t> names_tree;//del
         typedef std::unordered_map<anet::socket_data_ptr, users_tree_it> activeSockets;
 
     private:
@@ -55,7 +55,7 @@ namespace db
         mutable std::shared_mutex userDataMut, userNamesMut, activeSocketsMut;
 
     public:
-        std::optional<users_tree_it> check_user_data(const name_t& name, const pass_t& pass)
+        std::optional<users_tree_it> check_user_data(const name_t& name, const pass_t& pass) const
         {
             std::shared_lock lock(userDataMut);
             users_tree_it it = userData_.find(name);
@@ -63,12 +63,7 @@ namespace db
                             std::optional<users_tree_it>(it) : std::nullopt);
         }
 
-        bool find_name(const name_t& name)
-        {
-
-            std::shared_lock lock(userNamesMut);
-            return userNames_.find(name) != userNames_.end();
-        }
+        
 
     public:
         
@@ -86,13 +81,15 @@ namespace db
             std::lock_guard lock(activeSocketsMut);
             activeSockets_.erase(socketData);
         }
-
-        void insert_name(const name_t& name)
+        
+        bool find_and_insert_name(const name_t& name)
         {
             std::lock_guard lock(userNamesMut);
-            userNames_.insert(name);
+            bool isFind = userNames_.find(name) != userNames_.end();
+            if(isFind) userNames_.insert(name);
+            return isFind;
         }
-
+        
         void erase_name(const name_t& name)
         {
             std::lock_guard lock(userNamesMut);

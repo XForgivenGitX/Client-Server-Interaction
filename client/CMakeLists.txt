@@ -2,7 +2,7 @@
 
 cmake_minimum_required(VERSION 3.5)
 
-set(EXEC_NAME quickchat-client)
+set(EXEC_NAME ${PROJECT_NAME}-client)
 
 set(${EXEC_NAME}_DIR_CLIENT_SESSION client_session)
 
@@ -34,8 +34,8 @@ target_include_directories(${EXEC_NAME} PRIVATE
     )
 
 target_link_libraries(${EXEC_NAME} PRIVATE 
-    quickchat-shared    
-    quickchat-network
+    ${PROJECT_NAME}-shared    
+    ${PROJECT_NAME}-network
     )
 
 ############################################################

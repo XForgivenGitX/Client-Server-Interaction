@@ -26,4 +26,10 @@ namespace lg
 
         return stream.str().c_str();
     }
+
+    std::string boolalpha_cast(bool rhs)
+    {
+        if(rhs) return "true";
+        else return "false";
+    }
 }

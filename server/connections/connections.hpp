@@ -16,9 +16,8 @@ namespace server
         using db::server_database::erase_user;
         using db::server_database::insert_socket;
         using db::server_database::erase_socket;
-        using db::server_database::find_name;
+        using db::server_database::find_and_insert_name;
         using db::server_database::check_user_data;
-        using db::server_database::insert_name;
         using db::server_database::erase_name;
     
     private:

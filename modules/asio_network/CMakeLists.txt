@@ -2,7 +2,7 @@
 
 cmake_minimum_required(VERSION 3.5)
 
-set(LIBRARY_NAME quickchat-network)
+set(LIBRARY_NAME ${PROJECT_NAME}-network)
 
 set(${LIBRARY_NAME}_DIR_SOCKET_DATA socket_data)
 set(${LIBRARY_NAME}_DIR_SOCKET_IO socket_io)
@@ -52,7 +52,7 @@ target_include_directories(${LIBRARY_NAME}
 
 target_link_libraries(${LIBRARY_NAME} PRIVATE 
     ${Boost_LIBRARIES}
-    quickchat-shared
+    ${PROJECT_NAME}-shared
     wsock32.a 
     ws2_32.a
     )

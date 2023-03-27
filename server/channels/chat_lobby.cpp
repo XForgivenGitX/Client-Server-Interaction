@@ -58,6 +58,7 @@ namespace server
                 "called receive command handler", 
                 "sock: " + std::to_string(socketData->get_handle()), 
                 "pack: " + socketData->receive_buffer_,
+                "match: " + lg::boolalpha_cast(splitedPack.isMatched()),
                 "status: " + error_c.message());
 #endif
         if (error_c || !splitedPack.isMatched())
@@ -68,11 +69,10 @@ namespace server
         {
         case command::REGISTER:
         {
-            auto name = splitedPack.get_argument(protocol::NAME_INDEX);
-            auto pass = splitedPack.get_argument(protocol::PASS_INDEX);
-            if (!myServer.find_name(name))
+            auto name = splitedPack.get_argument(protocol::USER_NAME_INDEX);
+            auto pass = splitedPack.get_argument(protocol::USER_PASS_INDEX);
+            if (!myServer.find_and_insert_name(name))
             {
-                myServer.insert_name(name);
                 auto newUser = myServer.insert_user
                 (db::user_data{
                     name,
@@ -92,11 +92,11 @@ namespace server
 
         case command::LOG_IN:
         {
-            auto name = splitedPack.get_argument(protocol::NAME_INDEX);
-            auto pass = splitedPack.get_argument(protocol::PASS_INDEX);
+            auto name = splitedPack.get_argument(protocol::USER_NAME_INDEX);
+            auto pass = splitedPack.get_argument(protocol::USER_PASS_INDEX);
             if (auto userDataOpt = myServer.check_user_data(name, pass); userDataOpt)
             {
-                auto& ipAddresses = const_cast<db::user_data::ip_addresses&>(userDataOpt.value()->second.myIp_);
+                auto& ipAddresses = const_cast<db::user_data::ip_addresses&>(userDataOpt.value()->second.myIp_);//data race
                 if(std::find(ipAddresses.begin(), ipAddresses.end(), socketData->get_ip()) == ipAddresses.end())
                 {
                     ipAddresses.push_back(socketData->get_ip());
@@ -112,6 +112,10 @@ namespace server
         break;
 
         case command::CREATE_ROOM:
+        {
+            auto name = splitedPack.get_argument(protocol::ROOM_NAME_INDEX);
+            
+        }
         break;
         
         default:
