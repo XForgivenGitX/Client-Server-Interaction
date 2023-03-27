@@ -1,24 +1,28 @@
 #pragma once
-#include <string>
-#include <iostream>
 
+#include <string>
 #include <boost/asio/io_service.hpp>
 #include <boost/core/noncopyable.hpp>
 #include <boost/system/error_code.hpp>
+#include <boost/asio/write.hpp>
+#include <boost/asio/read.hpp>
 #include <boost/asio/ip/tcp.hpp>
+#include "utility.hpp"
 
-namespace io__ = boost::asio;
-typedef std::string transf_data;
-typedef std::string addr_t;
-typedef unsigned short port_t;
-typedef boost::system::error_code error_code;
-
+namespace io__      = boost::asio;
 namespace anet
 {
+    namespace ip      = io__::ip;
+    using err_c = boost::system::error_code;
+    
+    typedef std::string transf_data;
+    typedef std::string ip_type;
+    typedef unsigned short port_t;
+    
     struct socket_data : boost::noncopyable
     {
     public:    
-        io__::ip::tcp::socket socket_;
+        ip::tcp::socket socket_;
         transf_data send_buffer_, receive_buffer_;
     
     public:   
@@ -27,6 +31,8 @@ namespace anet
     
     public: 
         void shutdown() noexcept; 
+        ip_type get_ip() const;
+        std::size_t get_handle();
     };
     typedef std::shared_ptr<socket_data> socket_data_ptr;
 
@@ -35,11 +41,11 @@ namespace anet
     struct end_point_wrapper
     {
     public:   
-        io__::ip::tcp::endpoint point_;
-        error_code error_;
+        ip::tcp::endpoint point_;
+        err_c error_c_;
     
     public:    
-        end_point_wrapper(port_t port, const addr_t& address);
+        end_point_wrapper(port_t port, const ip_type& address);
         end_point_wrapper(port_t port, const io__::ip::tcp& address);
         end_point_wrapper(){}
     };

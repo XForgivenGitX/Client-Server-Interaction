@@ -2,7 +2,7 @@
 
 namespace anet
 {
-void send_receive::send(socket_data_ptr socketData, callback_func_t &&handler)
+void send_receive::send(const socket_data_ptr& socketData, callback_func_t &&handler)
 {
     io__::async_write
         (
@@ -12,7 +12,7 @@ void send_receive::send(socket_data_ptr socketData, callback_func_t &&handler)
         );
 }
 
-void send_receive::receive(socket_data_ptr socketData, 
+void send_receive::receive(const socket_data_ptr& socketData, 
                     callback_func_t &&handler, std::size_t atMostBytes, std::size_t atLeastBytes)
 {
     socketData->receive_buffer_.resize(atMostBytes);
@@ -25,34 +25,45 @@ void send_receive::receive(socket_data_ptr socketData,
         );
 }
 
-void send_receive::send_called_function(const error_code &error, 
-                                    std::size_t bytesTransferred, callback_function_wrapper& wrapper)
+void send_receive::send_called_function(const err_c &error_c, 
+                                [[maybe_unused]] std::size_t bytesTransferred, callback_function_wrapper& wrapper)
 {
 #ifdef NETWORK_ENABLE_HANDLER_TRACKING
-    std::cout << "@>>: " << bytesTransferred << " bytes: " << socketData_->receive_buffer_ << '\n';
+    BOOST_LOG_TRIVIAL(info)
+            << lg::build_log("send package",
+                "sock: " + std::to_string(wrapper.socketData_->get_handle()), 
+                "bytes: " + std::to_string(bytesTransferred), 
+                "pack: " + wrapper.socketData_->send_buffer_, 
+                "status: " + error_c.message());
+    
 #endif
-    wrapper.functionWrapped_(wrapper.socketData_, error);
+    wrapper.functionWrapped_(wrapper.socketData_, error_c);
 }
 
-void send_receive::receive_called_function(const error_code &error, 
-                                    std::size_t bytesTransferred, callback_function_wrapper& wrapper)
+void send_receive::receive_called_function(const err_c &error_c, 
+                                [[maybe_unused]] std::size_t bytesTransferred, callback_function_wrapper& wrapper)
 {
     wrapper.socketData_->receive_buffer_.resize(bytesTransferred);
 #ifdef NETWORK_ENABLE_HANDLER_TRACKING
-    std::cout << "@>>: " << bytesTransferred << " bytes: " << socketData_->receive_buffer_ << '\n';
+    BOOST_LOG_TRIVIAL(info)
+            << lg::build_log("receive package",
+                "sock: " + std::to_string(wrapper.socketData_->get_handle()), 
+                "bytes: " + std::to_string(bytesTransferred), 
+                "pack: " + wrapper.socketData_->receive_buffer_, 
+                "status: " + error_c.message());
 #endif
-    wrapper.functionWrapped_(wrapper.socketData_, error);
+    wrapper.functionWrapped_(wrapper.socketData_, error_c);
 }
 
 send_receive::callback_function_wrapper::callback_function_wrapper
-                        (socket_data_ptr& socketData, callback_func_t &&handler, called_function&& call)
+                        (const socket_data_ptr& socketData, callback_func_t &&handler, called_function&& call)
     : socketData_(socketData), functionWrapped_(std::move(handler)), call_(std::move(call))
 {}
 
 void send_receive::callback_function_wrapper::operator()
-                                (const error_code &error, std::size_t bytesTransferred)
+                                (const err_c &error_c, std::size_t bytesTransferred)
 {
-    call_(error, bytesTransferred, *this);
+    call_(error_c, bytesTransferred, *this);
 }
 
 }

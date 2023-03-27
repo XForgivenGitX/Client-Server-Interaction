@@ -1,4 +1,5 @@
 #include "protocol.hpp"
+#include <iostream>
 using namespace std::literals::string_literals;
 
 namespace common
@@ -25,33 +26,36 @@ namespace common
         }
         cmd_ = static_cast<command>(std::stoi(tokens[protocol::COMMAND_INDEX]));
         auto arg_token = tokens[protocol::ARGUMENT_INDEX];
+        args_.resize(0);
         if (arg_token.matched)
-            {
+        {
             std::copy(
                 std::sregex_token_iterator(arg_token.first, arg_token.second, args, protocol::INDET_VALUE),
                 std::sregex_token_iterator{},
-                std::back_insert_iterator<std::vector<packet_t>>(args_));
-            }
+                std::back_insert_iterator<args_t>(args_));
+        }
         if (!is_correct_argument(args_.size()))
             isMatchedPack = false;
+        else isMatchedPack = true;
     }
 
     bool transf_package::is_correct_argument(std::size_t argIndex)
     {
         switch (cmd_)
         {
-        case command::LOG_IN_REQ:
-        case command::REGISTER_REQ:
-            if (argIndex < 2)
+        case command::LOG_IN:
+        case command::REGISTER:
+            if (argIndex > 2)
                 return false;
             break;
-        case command::CREATE_ROOM_REQ:
+        case command::CREATE_ROOM:
         case command::SEND_MESSAGE:
         case command::RECEIVE_MESSAGE:
-        case command::JOIN_ROOM_REQ:
-            if (argIndex < 1)
+        case command::JOIN_ROOM:
+            if (argIndex > 1)
                 return false;
             break;
+        
         default:
             if (argIndex != 0)
                 return false;

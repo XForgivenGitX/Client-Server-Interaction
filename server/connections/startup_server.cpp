@@ -1,8 +1,9 @@
-#include <server_module.hpp>
+#include "connections.hpp"
 using namespace server;
 
 int main(int argc, char** argv) 
 { 
+    lg::init_logger();
     system("chcp 1251");
     // if(argc != 2) 
     // {

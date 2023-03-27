@@ -1,17 +1,41 @@
-#########################################################
+############################################################
 
-set(SUBPROJECT_NAME client)
+cmake_minimum_required(VERSION 3.5)
 
-set(${SUBPROJECT_NAME}_INCLUDE_DIRS ${CMAKE_CURRENT_LIST_DIR}/Inc)
-set(${SUBPROJECT_NAME}_SOURCE_DIRS ${CMAKE_CURRENT_LIST_DIR}/Src)
+set(EXEC_NAME quickchat-client)
 
-set(${SUBPROJECT_NAME}_SRC
-    ${${SUBPROJECT_NAME}_SOURCE_DIRS}/client_session.cpp
-    ${${SUBPROJECT_NAME}_SOURCE_DIRS}/main.cpp)
+set(${EXEC_NAME}_DIR_CLIENT_SESSION client_session)
 
-add_executable(${SUBPROJECT_NAME}  ${${SUBPROJECT_NAME}_SRC})
+set(${EXEC_NAME}_INCLUDE_DIRS 
+    ${${EXEC_NAME}_DIR_CLIENT_SESSION}
+    )
 
-target_include_directories(${SUBPROJECT_NAME} PRIVATE ${${SUBPROJECT_NAME}_INCLUDE_DIRS})
-target_link_libraries(${SUBPROJECT_NAME} PRIVATE network_lib)
-target_link_libraries(${SUBPROJECT_NAME} PRIVATE common_lib)
-#########################################################
+set(${EXEC_NAME}_SRC
+    ${${EXEC_NAME}_DIR_CLIENT_SESSION}/client_session.cpp
+    ${${EXEC_NAME}_DIR_CLIENT_SESSION}/startup_client.cpp
+    )
+
+add_executable(${EXEC_NAME} ${${EXEC_NAME}_SRC})
+
+set_target_properties(${EXEC_NAME} PROPERTIES
+    CXX_STANDARD 20
+    CXX_STANDARD_REQUIRED ON
+    )
+
+target_compile_options(${EXEC_NAME} PRIVATE
+    -Wall 
+    -Wextra 
+    -Wpedantic 
+    -std=c++20
+    )
+
+target_include_directories(${EXEC_NAME} PRIVATE 
+    ${${EXEC_NAME}_INCLUDE_DIRS} 
+    )
+
+target_link_libraries(${EXEC_NAME} PRIVATE 
+    quickchat-shared    
+    quickchat-network
+    )
+
+############################################################

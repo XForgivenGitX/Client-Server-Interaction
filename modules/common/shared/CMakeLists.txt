@@ -1,7 +1,7 @@
 ############################################################
 cmake_minimum_required(VERSION 3.5)
 
-set(LIBRARY_NAME shared)
+set(LIBRARY_NAME quickchat-shared)
 
 set(${LIBRARY_NAME}_DIR_LOG ${CMAKE_CURRENT_SOURCE_DIR}/log)
 set(${LIBRARY_NAME}_DIR_PROTOCOL ${CMAKE_CURRENT_SOURCE_DIR}/protocol)

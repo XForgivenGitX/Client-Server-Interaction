@@ -1,25 +1,54 @@
-#########################################################
+############################################################
 
-set(SUBPROJECT_NAME server)
+cmake_minimum_required(VERSION 3.5)
 
-set(${SUBPROJECT_NAME}_INC
-    ${CMAKE_CURRENT_LIST_DIR}/connectios/Inc/connection.hpp
+set(EXEC_NAME quickchat-server)
+
+set(${EXEC_NAME}_DIR_CONNECTIONS connections)
+set(${EXEC_NAME}_DIR_DATABASE database)
+set(${EXEC_NAME}_DIR_CHANNELS channels)
+
+set(${EXEC_NAME}_INCLUDE_DIRS 
+    ${${EXEC_NAME}_DIR_DATABASE}
+    ${${EXEC_NAME}_DIR_CHANNELS}
+    ${${EXEC_NAME}_DIR_CONNECTIONS}
+    )
+
+set(${EXEC_NAME}_SRC
+    ${${EXEC_NAME}_DIR_DATABASE}/database.cpp
+    ${${EXEC_NAME}_DIR_CHANNELS}/chat_lobby.cpp
+    ${${EXEC_NAME}_DIR_CONNECTIONS}/connections.cpp
+    ${${EXEC_NAME}_DIR_CONNECTIONS}/startup_server.cpp
+    )
+
+set(Boost_USE_STATIC_LIBS ON)
+set(BOOST_COMPONENTS thread system)
+find_package(Boost COMPONENTS ${BOOST_COMPONENTS} REQUIRED)
+
+add_executable(${EXEC_NAME} ${${EXEC_NAME}_SRC})
+
+set_target_properties(${EXEC_NAME} PROPERTIES
+        CXX_STANDARD 17
+        CXX_STANDARD_REQUIRED ON
+    )
+
+target_compile_options(${EXEC_NAME} PRIVATE
+    -Wall -Wextra -Wpedantic -std=c++17 
     
-)
+    -DSERVER_ENABLE_HANDLER_TRACKING
+    -DDB_LOG_SEVERITY=debug
+    -DSERVER_LOG_SEVERITY=info
+    )
 
+target_include_directories(${EXEC_NAME} PRIVATE 
+    ${${EXEC_NAME}_INCLUDE_DIRS} 
+    ${Boost_INCLUDE_DIRS}
+    )
 
-set(${SUBPROJECT_NAME}_SRC
-    #${${SUBPROJECT_NAME}_SOURCE_DIRS}/chat_room.cpp
-    #${${SUBPROJECT_NAME}_SOURCE_DIRS}/chat_lobby.cpp
-    #${${SUBPROJECT_NAME}_SOURCE_DIRS}/database.cpp
-    #${${SUBPROJECT_NAME}_SOURCE_DIRS}/server_session.cpp
-    #${${SUBPROJECT_NAME}_SOURCE_DIRS}/main.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/connectios/Src/connection.cpp)
+target_link_libraries(${EXEC_NAME} PRIVATE 
+    ${Boost_LIBRARIES} 
+    quickchat-shared
+    quickchat-network
+    )
 
-add_executable(${SUBPROJECT_NAME}  ${${SUBPROJECT_NAME}_SRC})
-
-target_include_directories(${SUBPROJECT_NAME} PRIVATE ${${SUBPROJECT_NAME}_INCLUDE_DIRS})
-target_link_libraries(${SUBPROJECT_NAME} PRIVATE network_lib)
-target_link_libraries(${SUBPROJECT_NAME} PRIVATE common_lib)
-
-#########################################################
+############################################################

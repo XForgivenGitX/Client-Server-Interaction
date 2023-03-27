@@ -29,28 +29,27 @@ namespace common
 
     enum class command : unsigned
     {
-        REGISTER_REQ,
-        LOG_IN_REQ,
+        REGISTER,
+        LOG_IN,
 
-        ERROR_REGISTER_RESP,
-        ERROR_LOG_IN_RESP,
+        ERROR_REGISTER,
+        ERROR_LOG_IN,
 
-        SUCCESS_REGISTER_RESP,
-        SUCCESS_LOG_IN_RESP,
+        SUCCESS_REGISTER,
+        SUCCESS_LOG_IN,
 
-        CREATE_ROOM_REQ,
-        SUCCESS_CREATE_ROOM_RESP,
-        ERROR_CREATE_ROOM_RESP,
+        CREATE_ROOM,
+        SUCCESS_CREATE_ROOM,
+        ERROR_CREATE_ROOM,
 
-        JOIN_ROOM_REQ,
-        SUCCESS_JOIN_ROOM_RESP,
-        ERROR_JOIN_ROOM_RESP,
+        JOIN_ROOM,
+        SUCCESS_JOIN_ROOM,
+        ERROR_JOIN_ROOM,
 
         SEND_MESSAGE,
         RECEIVE_MESSAGE,
 
-        DETACH_ROOM_REQ,
-        DETACH_ROOM_RESP,
+        DETACH_ROOM,
     };
 
     struct splited_package

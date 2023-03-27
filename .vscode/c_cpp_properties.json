@@ -8,9 +8,8 @@
                 "C:\\msys64\\mingw64\\include",
                 "C:\\msys64\\mingw64\\lib\\gcc\\x86_64-w64-mingw32\\12.2.0\\include",
                 "${workspaceFolder}\\modules\\asio_network",
-                //"${workspaceFolder}\\modules\\asio_network\\socket_io",
-                //"${workspaceFolder}\\server\\Inc",
-                "${workspaceFolder}\\client\\Inc",
+                "${workspaceFolder}\\server",
+                "${workspaceFolder}\\client",
                 "${workspaceFolder}\\modules\\common"
             ],
             "defines": [

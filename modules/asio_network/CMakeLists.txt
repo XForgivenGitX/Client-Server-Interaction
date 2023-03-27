@@ -2,7 +2,7 @@
 
 cmake_minimum_required(VERSION 3.5)
 
-set(LIBRARY_NAME network)
+set(LIBRARY_NAME quickchat-network)
 
 set(${LIBRARY_NAME}_DIR_SOCKET_DATA socket_data)
 set(${LIBRARY_NAME}_DIR_SOCKET_IO socket_io)
@@ -33,16 +33,26 @@ set_target_properties(${LIBRARY_NAME} PROPERTIES
     )
 
 target_compile_options(${LIBRARY_NAME} PRIVATE
-    -Wall -Wextra -Wpedantic -std=c++17
+    -Wall 
+    -Wextra 
+    -Wpedantic 
+    -std=c++17 
+    #-DBOOST_ASIO_DISABLE_HANDLER_TYPE_REQUIREMENTS
+    -DBOOST_ASIO_NO_DEPRECATED
+    #-DBOOST_ASIO_ENABLE_HANDLER_TRACKING
+    #-DBOOST_ASIO_DEFAULT_LINKED_LIBS
+    #-DBOOST_NO_ANSI_APIS 
+    #-DNETWORK_ENABLE_HANDLER_TRACKING
     )
 
-target_include_directories(${LIBRARY_NAME} PRIVATE 
-    ${${LIBRARY_NAME}_INCLUDE_DIRS} 
-    ${Boost_INCLUDE_DIRS}
+target_include_directories(${LIBRARY_NAME}
+    PUBLIC ${${LIBRARY_NAME}_INCLUDE_DIRS} 
+    PRIVATE ${Boost_INCLUDE_DIRS}
     )
 
-    target_link_libraries(${LIBRARY_NAME} PRIVATE 
-    ${Boost_LIBRARIES} 
+target_link_libraries(${LIBRARY_NAME} PRIVATE 
+    ${Boost_LIBRARIES}
+    quickchat-shared
     wsock32.a 
     ws2_32.a
     )
