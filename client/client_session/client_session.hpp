@@ -1,5 +1,6 @@
 #pragma once
 #include "listen_connect.hpp"
+#include "send_receive.hpp"
 #include "protocol.hpp"
 #include <thread>
 // TODO
@@ -77,7 +78,8 @@ namespace client
             splitedPack.disassemble(socketData->receive_buffer_);
             if (error || !splitedPack.isMatched())
             {
-                // лив
+                socketData->shutdown();
+                return;
             }
             switch (splitedPack.get_command())
             {

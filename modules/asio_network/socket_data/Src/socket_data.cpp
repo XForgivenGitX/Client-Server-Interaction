@@ -14,7 +14,7 @@ namespace anet
         socket_.shutdown(ip::tcp::socket::shutdown_both, error_c);
 #ifdef NETWORK_ENABLE_HANDLER_TRACKING
         BOOST_LOG_TRIVIAL(info)
-            << lg::build_log("shutdown socket",
+            << lg::build_log("called shutdown socket",
                 "sock: " + std::to_string(get_handle()), 
                 "status: " + error_c.message());
 #endif

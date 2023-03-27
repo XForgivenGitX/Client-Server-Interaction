@@ -21,7 +21,7 @@ project(QuickChat)
 add_subdirectory(modules/common)
 add_subdirectory(modules/asio_network)
 add_subdirectory(server)
-#add_subdirectory(client)
+add_subdirectory(client)
 
 ############################################
 

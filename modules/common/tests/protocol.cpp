@@ -1,7 +1,5 @@
-#define BOOST_TEST_MAIN
-#define BOOST_TEST_MODULE protocol
 #include <boost/test/unit_test.hpp>
-#include <protocol.hpp>
+#include "protocol.hpp"
 using namespace common;
 
 struct test_case
@@ -62,7 +60,7 @@ BOOST_FIXTURE_TEST_CASE(disassemble_pack, fixture)
     BOOST_CHECK_THROW(pack.get_argument(0), std::out_of_range);
 };
 
-BOOST_FIXTURE_TEST_CASE(correct_number_argument, fixture)
+BOOST_FIXTURE_TEST_CASE(correct_number_arguments, fixture)
 {
     transf_package pack;
     pack.disassemble(case_1.expectedPack_);

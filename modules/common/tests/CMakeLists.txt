@@ -24,6 +24,10 @@ target_include_directories (${TESTS_NAME} PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
     )
 
+target_compile_options(${TESTS_NAME} PRIVATE
+    -DBOOST_TEST_MAIN
+    -DBOOST_TEST_MODULE=${TESTS_NAME}
+    )
 target_link_libraries(${TESTS_NAME} PRIVATE 
     ${Boost_LIBRARIES}
     quickchat-shared
