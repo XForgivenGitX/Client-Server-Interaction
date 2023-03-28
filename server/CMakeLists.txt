@@ -19,6 +19,7 @@ set(${EXEC_NAME}_INCLUDE_DIRS
 set(${EXEC_NAME}_SRC
     ${${EXEC_NAME}_DIR_DATABASE}/database.cpp
     ${${EXEC_NAME}_DIR_CHANNELS}/user_account.cpp
+    ${${EXEC_NAME}_DIR_CHANNELS}/channel.cpp
     ${${EXEC_NAME}_DIR_CONNECTIONS}/connections.cpp
     ${${EXEC_NAME}_DIR_CONNECTIONS}/startup_server.cpp
     ${${EXEC_NAME}_DIR_LOBBY}/main_lobby.cpp

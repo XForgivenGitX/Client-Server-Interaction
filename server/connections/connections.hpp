@@ -7,7 +7,9 @@
 
 namespace server
 {
-    struct server_control_block : private db::server_database, public boost::serialization::singleton<server_control_block>
+    struct server_control_block : 
+        private db::server_database, 
+        public boost::serialization::singleton<server_control_block>
     {
         using db::server_database::insert_user;
         using db::server_database::erase_user;
@@ -15,6 +17,7 @@ namespace server
         using db::server_database::erase_socket;
         using db::server_database::find_name;
         using db::server_database::check_user_data;
+        using db::server_database::shutdown_all_sockets;
     
     private:
         io__::thread_pool pool_;

@@ -18,7 +18,7 @@ namespace anet
     typedef std::string transf_data;
     typedef std::string ip_type;
     typedef unsigned short port_t;
-    
+        
     struct socket_data : boost::noncopyable
     {
     public:    

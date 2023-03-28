@@ -120,75 +120,75 @@ namespace client
 
         void identify_and_send_command(anet::socket_data_ptr &socketData)
         {
-            // std::string cmdBuff;
-            // std::cout << "Enter command:";
-            // std::getline(std::cin, cmdBuff);
-            // if (cmdBuff == "join")
-            // {
-            //     std::cout << "Room name:";
-            //     std::getline(std::cin, cmdBuff);
-            //     socketData->send_buffer_ = common::assemble_frame(command::JOIN_ROOM_REQ, {cmdBuff});
-            //     anet::send_receive::send(socketData, {lobby_request_handler, this});
-            // }
-            // else if (cmdBuff == "create")
-            // {
-            //     std::cout << "Room name:";
-            //     std::getline(std::cin, cmdBuff);
-            //     socketData->send_buffer_ = common::assemble_frame(command::CREATE_ROOM_REQ, {cmdBuff});
-            //     anet::send_receive::send(socketData, {lobby_request_handler, this});
-            // }
-            // else
-            // {
-            //     std::cout << "encorrect command.\n";
-            //     identify_and_send_command(socketData);
-            // }
+            std::string cmdBuff;
+            std::cout << "Enter command:";
+            std::getline(std::cin, cmdBuff);
+            if (cmdBuff == "join")
+            {
+                std::cout << "Room name:";
+                std::getline(std::cin, cmdBuff);
+                socketData->send_buffer_ = common::assemble_package(command::JOIN_ROOM, {cmdBuff});
+                anet::send_receive::send(socketData, {lobby_request_handler, this});
+            }
+            else if (cmdBuff == "create")
+            {
+                std::cout << "Room name:";
+                std::getline(std::cin, cmdBuff);
+                socketData->send_buffer_ = common::assemble_package(command::CREATE_ROOM, {cmdBuff});
+                anet::send_receive::send(socketData, {lobby_request_handler, this});
+            }
+            else
+            {
+                std::cout << "encorrect command.\n";
+                identify_and_send_command(socketData);
+            }
         }
 
-        void enter_to_lobby(const anet::socket_data_ptr &socketData)
+        void enter_to_lobby(anet::socket_data_ptr &socketData)
         {
             std::cout << "Welcome to the lobby!\n";
-            // identify_and_send_command(socketData);
+            identify_and_send_command(socketData);
         }
 
         void lobby_request_handler(anet::socket_data_ptr &socketData, const boost::system::error_code &error)
         {
-            // anet::send_receive::receive(socketData_, {lobby_responce_handler, this});
+            anet::send_receive::receive(socketData, {lobby_responce_handler, this});
         }
 
         void lobby_responce_handler(anet::socket_data_ptr &socketData, const boost::system::error_code &error)
         {
-            // auto resp = common::disassemble_frame(socketData->receive_buffer_);
-            // if (error || !resp)
-            // {
-            //     socketData->shutdown();
-            //     return;
-            // }
-            // auto &[cmd, args] = resp.value();
-            // switch (cmd)
-            // {
-            // case common::command::SUCCESS_CREATE_ROOM_RESP:
-            //     std::cout << "The room has been successfully created!\n";
-            //     identify_and_send_command(socketData);
-            //     break;
+            common::transf_package pack;
+            pack.disassemble(socketData->receive_buffer_);
+            if (error || !pack.isMatched())
+            {
+                socketData->shutdown();
+                return;
+            }
+            switch (pack.get_command())
+            {
+            case common::command::SUCCESS_CREATE_ROOM:
+                std::cout << "The room has been successfully created!\n";
+                identify_and_send_command(socketData);
+                break;
 
-            // case common::command::ERROR_CREATE_ROOM_RESP:
-            //     std::cout << "A room with that name already exists.\n";
-            //     identify_and_send_command(socketData);
-            //     break;
+            case common::command::ERROR_CREATE_ROOM:
+                std::cout << "A room with that name already exists.\n";
+                identify_and_send_command(socketData);
+                break;
 
-            // case common::command::SUCCESS_JOIN_ROOM_RESP:
-            //     std::cout << "Successfully joined, have a nice chat!\n";
-            //     start_communication(socketData);
-            //     break;
+            case common::command::SUCCESS_JOIN_ROOM:
+                std::cout << "Successfully joined, have a nice chat!\n";
+                //start_communication(socketData);
+                break;
 
-            // case common::command::ERROR_JOIN_ROOM_RESP:
-            //     std::cout << "There is no room with that name.\n";
-            //     identify_and_send_command(socketData);
-            //     break;
+            case common::command::ERROR_JOIN_ROOM:
+                std::cout << "There is no room with that name.\n";
+                identify_and_send_command(socketData);
+                break;
 
-            // default:
-            //     break;
-            // }
+            default:
+                break;
+            }
         }
 
         // void start_communication(anet::socket_data_ptr &socketData)

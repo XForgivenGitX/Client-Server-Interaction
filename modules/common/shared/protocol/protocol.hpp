@@ -22,6 +22,7 @@ namespace common
         constexpr unsigned USER_NAME_INDEX = 0;
         constexpr unsigned USER_PASS_INDEX = 1;
         constexpr unsigned ROOM_NAME_INDEX = 0;
+        constexpr unsigned MESSAGE_INDEX = 0;
     }
 
     namespace limits

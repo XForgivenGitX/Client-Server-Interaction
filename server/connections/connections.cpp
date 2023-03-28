@@ -1,6 +1,5 @@
 #include "connections.hpp"
 
-
 namespace server
 {
     server_control_block::server_control_block()

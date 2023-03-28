@@ -1,7 +1,7 @@
 #include "main_lobby.hpp"
 #include "connections.hpp"
 
-//find n insrt
+// find n insrt
 namespace
 {
     auto &myServer = server::server_control_block::get_mutable_instance();
@@ -20,8 +20,12 @@ namespace server
     {
         myServer.erase_socket(socketData);
     }
+    void main_lobby::leave_all()
+    {
+        myServer.shutdown_all_sockets();
+    }
 
-    void main_lobby::send_command(anet::socket_data_ptr &socketData, cmd_type cmd)//
+    void main_lobby::send_command(anet::socket_data_ptr &socketData, cmd_type cmd) //
     {
         socketData->send_buffer_ = common::assemble_package(cmd);
         anet::send_receive::send(socketData, {send_command_handler, this});
@@ -30,12 +34,12 @@ namespace server
     void main_lobby::send_command_handler(anet::socket_data_ptr &socketData, const anet::err_c &error_c)
     {
 #ifdef SERVER_ENABLE_HANDLER_TRACKING
-        BOOST_LOG_TRIVIAL(info) 
-            << lg::build_log(lg::address_cat("lobby=", this), 
-                "called send command handler", 
-                "sock: " + std::to_string(socketData->get_handle()), 
-                "pack: " + socketData->send_buffer_,
-                "status: " + error_c.message());
+        BOOST_LOG_TRIVIAL(info)
+            << lg::build_log(lg::address_cat("lobby=", this),
+                             "called send command handler",
+                             "sock: " + std::to_string(socketData->get_handle()),
+                             "pack: " + socketData->send_buffer_,
+                             "status: " + error_c.message());
 #endif
         if (error_c)
         {
@@ -48,18 +52,18 @@ namespace server
     }
 
     void main_lobby::receive_command_handler(anet::socket_data_ptr &socketData, const anet::err_c &error_c)
-    {   
+    {
         using namespace common;
         transf_package splitedPack;
         splitedPack.disassemble(socketData->receive_buffer_);
 #ifdef SERVER_ENABLE_HANDLER_TRACKING
-        BOOST_LOG_TRIVIAL(info) 
-            << lg::build_log(lg::address_cat("lobby=", this), 
-                "called receive command handler", 
-                "sock: " + std::to_string(socketData->get_handle()), 
-                "pack: " + socketData->receive_buffer_,
-                "match: " + lg::boolalpha_cast(splitedPack.isMatched()),
-                "status: " + error_c.message());
+        BOOST_LOG_TRIVIAL(info)
+            << lg::build_log(lg::address_cat("lobby=", this),
+                             "called receive command handler",
+                             "sock: " + std::to_string(socketData->get_handle()),
+                             "pack: " + socketData->receive_buffer_,
+                             "match: " + lg::boolalpha_cast(splitedPack.isMatched()),
+                             "status: " + error_c.message());
 #endif
         if (error_c || !splitedPack.isMatched())
         {
@@ -74,8 +78,8 @@ namespace server
             auto pass = splitedPack.get_argument(protocol::USER_PASS_INDEX);
             if (!myServer.find_name(name))
             {
-                auto newUser = myServer.insert_user
-                        (std::make_shared<user_account>(name, pass, shared_from_this()));
+                auto newUser = std::make_shared<user_account>(name, pass, shared_from_this());
+                myServer.insert_user(newUser);
                 newUser->send_command(socketData, command::SUCCESS_REGISTER);
             }
             else
@@ -91,7 +95,6 @@ namespace server
             auto pass = splitedPack.get_argument(protocol::USER_PASS_INDEX);
             if (auto userDataOpt = myServer.check_user_data(name, pass); userDataOpt)
             {
-                myServer.insert_socket(socketData);
                 userDataOpt.value()->send_command(socketData, command::SUCCESS_LOG_IN);
             }
             else
@@ -103,11 +106,11 @@ namespace server
 
         default:
 #ifdef SERVER_ENABLE_HANDLER_TRACKING
-        BOOST_LOG_TRIVIAL(error) 
-            << lg::build_log(lg::address_cat("lobby=", this), 
-                "unknown command accepted");
+            BOOST_LOG_TRIVIAL(error)
+                << lg::build_log(lg::address_cat("lobby=", this),
+                                 "unknown command accepted");
 #endif
-        break;
+            break;
         }
     }
 }
