@@ -101,8 +101,11 @@ namespace db
         {
             std::shared_lock lock(channelsMut);
             auto it = channels_.find(name);
-            return (it != channels_.end() ? 
-                            std::optional<server::IChannel_ptr>(it->second) : std::nullopt);
+            if(it != channels_.end())
+            {
+                return it->second;
+            }
+            else return std::nullopt;
         }
     
     public:

@@ -96,16 +96,18 @@ namespace server
                 if(currentChannel_ != nullptr)
                 {
                     currentChannel_->send_all(msg);
+                    anet::send_receive::receive(socketData, {receive_command_handler, this});
                 }
             }
-            
+            break;
+
             default:
 #ifdef SERVER_ENABLE_HANDLER_TRACKING
                 BOOST_LOG_TRIVIAL(error)
                     << lg::build_log(lg::address_cat("user=", this),
                                      "unknown command accepted");
 #endif
-                break;
+            break;
             }
         }
     };

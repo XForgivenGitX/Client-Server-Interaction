@@ -178,7 +178,7 @@ namespace client
 
             case common::command::SUCCESS_JOIN_ROOM:
                 std::cout << "Successfully joined, have a nice chat!\n";
-                //start_communication(socketData);
+                start_communication(socketData);
                 break;
 
             case common::command::ERROR_JOIN_ROOM:
@@ -191,62 +191,63 @@ namespace client
             }
         }
 
-        // void start_communication(anet::socket_data_ptr &socketData)
-        // {
-        //     io__::post(socketData->socket_.get_executor(), [&]{receive_message(socketData);});
-        //     std::string msgBuff;
-        //     bool leave = false;
-        //     while (!leave)
-        //     {
-        //         std::getline(std::cin, msgBuff);
-        //         if(msgBuff.empty()) continue;
-        //         if(msgBuff == "-q")
-        //         {
-        //             socketData->send_buffer_ = common::assemble_frame(command::DETACH_ROOM_REQ, {msgBuff});
-        //             leave = true;
-        //         }
-        //         else
-        //             socketData->send_buffer_ = common::assemble_frame(command::SEND_MESSAGE, {msgBuff});
-        //         anet::send_receive::send(socketData, {send_message_handler, this});
-        //     }
-        // }
+        void start_communication(anet::socket_data_ptr &socketData)
+        {
+            io__::post(socketData->socket_.get_executor(), [&]{receive_message(socketData);});
+            std::string msgBuff;
+            bool leave = false;
+            while (!leave)
+            {
+                std::getline(std::cin, msgBuff);
+                if(msgBuff.empty()) continue;
+                if(msgBuff == "-q")
+                {
+                    socketData->send_buffer_ = common::assemble_package(command::DETACH_ROOM, {msgBuff});
+                    leave = true;
+                }
+                else
+                    socketData->send_buffer_ = common::assemble_package(command::SEND_MESSAGE, {msgBuff});
+                anet::send_receive::send(socketData, {send_message_handler, this});
+            }
+        }
 
-        // void receive_message(anet::socket_data_ptr &socketData)
-        // {
-        //     anet::send_receive::receive(socketData_, {receive_message_handler, this});
-        // }
-        // void receive_message_handler(anet::socket_data_ptr& socketData, const boost::system::error_code &error)
-        // {
-        //     auto resp = common::disassemble_frame(socketData->receive_buffer_);
-        //     if (error || !resp)
-        //     {
-        //         socketData->shutdown();
-        //         return;
-        //     }
-        //     auto &[cmd, args] = resp.value();
-        //     switch (cmd)
-        //     {
-        //     case common::command::SEND_MESSAGE:
-        //         std::cout << args[0] << '\n';
-        //         receive_message(socketData);
-        //         break;
+        void receive_message(anet::socket_data_ptr &socketData)
+        {
+            anet::send_receive::receive(socketData, {receive_message_handler, this});
+        }
+        void receive_message_handler(anet::socket_data_ptr& socketData, const boost::system::error_code &error)
+        {
+            common::transf_package pack;
+            pack.disassemble(socketData->receive_buffer_);
+            // if (error || !pack.isMatched())
+            // {
+            //     socketData->shutdown();
+            //     return;
+            // }
 
-        //     case common::command::DETACH_ROOM_RESP:
-        //         identify_and_send_command(socketData);
-        //         break;
+            switch (pack.get_command())
+            {
+            case common::command::SEND_MESSAGE:
+                std::cout << pack.get_argument(0) << '\n';
+                receive_message(socketData);
+                break;
 
-        //     default:
-        //         break;
-        //     }
-        // }
+            case common::command::DETACH_ROOM:
+                identify_and_send_command(socketData);
+                break;
 
-        // void send_message_handler(anet::socket_data_ptr& socketData, const boost::system::error_code &error)
-        // {
-        //     if (error)
-        //     {
-        //         socketData->shutdown();
-        //     }
+            default:
+                break;
+            }
+        }
 
-        // }
+        void send_message_handler(anet::socket_data_ptr& socketData, const boost::system::error_code &error)
+        {
+            // if (error)
+            // {
+            //     socketData->shutdown();
+            // }
+
+        }
     };
 }

@@ -28,12 +28,13 @@ namespace server
         {
             if(find_channel(name))
             {
-                insert_channel(name, std::make_shared<channel>());
+                
                 return true;
             }
             else
             {
-                return false;
+                insert_channel(name, std::make_shared<channel>());
+                return true;
             }
         }
         
