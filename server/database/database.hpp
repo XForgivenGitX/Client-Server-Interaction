@@ -15,40 +15,20 @@
 
 namespace db
 {
+    struct chat_room{};
+    
+    
     typedef std::string name_t;
     typedef std::string pass_t;
     typedef std::size_t id_type;
     typedef std::map<name_t, user_data> users_tree;
     typedef users_tree::const_iterator users_tree_it;
     typedef std::unordered_map<anet::socket_data_ptr, users_tree_it> activeSockets;
-    
-    
-    struct user_data_for_access
-    {
-        name_t name_;
-        pass_t pass_;
-        user_data_for_access(const name_t& name, const pass_t pass)
-            : name_(name), pass_(pass){}
-    };
-    
-    
-    struct user_data : public user_data_for_access
-    {
-        typedef std::vector<anet::ip_type> ip_addresses;
-        
-    public:
-        ip_addresses myIp_;
-        id_type id_;
-    
-    public:
-        user_data(const name_t &name, const pass_t &pass, const anet::ip_type& ip, id_type id);
-    };
 
     struct server_database : public boost::noncopyable
     {
     private:
         users_tree userData_;
-        names_tree userNames_;
         activeSockets activeSockets_;
 
     private:
@@ -67,7 +47,7 @@ namespace db
 
     public:
         
-        typedef std::pair<server_database::users_tree_it, bool> insert_user_return_v;
+        typedef std::pair<users_tree_it, bool> insert_user_return_v;
         insert_user_return_v insert_user(const user_data &user);
         
         void erase_user(const name_t &user);

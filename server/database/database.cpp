@@ -2,8 +2,8 @@
 
 namespace db
 {
-    user_data::user_data(const name_t &name, const pass_t &pass, const anet::ip_type& ip, id_type id)
-        : name_(name), pass_(pass), myIp_({ip}), id_(id) {}
+    user_data::user_data(const name_t &name, const pass_t &pass)
+        : name_(name), pass_(pass) {}
 
     server_database::insert_user_return_v server_database::insert_user(const user_data &user)
     {
@@ -11,9 +11,7 @@ namespace db
         BOOST_LOG_TRIVIAL(DB_LOG_SEVERITY) 
             << lg::build_log("database-server: insert user", 
             "name: " + user.name_,
-            "pass: " + user.pass_,
-            "ip: " + user.myIp_.back(),
-            "id: " + std::to_string(user.id_));
+            "pass: " + user.pass_);
 #endif
         std::lock_guard lock(userDataMut);
         return userData_.insert(std::make_pair(user.name_, user));

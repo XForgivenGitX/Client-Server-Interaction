@@ -68,12 +68,7 @@ namespace server
     {
         pool_.join();
     }
-
-    std::size_t server_control_block::get_id()
-    {
-        return ++id_counter;
-    }
-
+    
     void server_control_block::signal_handler(anet::socket_data_ptr listenerSocket, [[maybe_unused]] const anet::err_c &error_c, int)
     {
 #ifdef SERVER_ENABLE_HANDLER_TRACKING

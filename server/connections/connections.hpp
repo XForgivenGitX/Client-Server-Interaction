@@ -6,8 +6,6 @@
 #include <boost/serialization/singleton.hpp>
 #include <boost/asio/signal_set.hpp>
 
-
-
 namespace server
 {
     struct server_control_block : private db::server_database, public boost::serialization::singleton<server_control_block>
@@ -21,7 +19,6 @@ namespace server
         using db::server_database::erase_name;
     
     private:
-        std::size_t id_counter;
         io__::thread_pool pool_;
         io__::io_context signalIos_;
         ILobby_ptr lobby_;
@@ -32,7 +29,6 @@ namespace server
     public:
         void join();
         void start_accepting_connections(anet::port_t port);
-        std::size_t get_id();
 
     private:
         void start_signal_set(anet::socket_data_ptr& listenerSocket);

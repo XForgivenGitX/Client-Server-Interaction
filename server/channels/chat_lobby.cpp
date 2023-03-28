@@ -77,8 +77,7 @@ namespace server
                 (db::user_data{
                     name,
                     pass,
-                    socketData->get_ip(), 
-                    myServer.get_id()
+                    socketData->get_ip()
                 });
                 myServer.insert_socket(socketData, newUser.first);
                 send_command(socketData, command::SUCCESS_REGISTER);
@@ -96,11 +95,6 @@ namespace server
             auto pass = splitedPack.get_argument(protocol::USER_PASS_INDEX);
             if (auto userDataOpt = myServer.check_user_data(name, pass); userDataOpt)
             {
-                auto& ipAddresses = const_cast<db::user_data::ip_addresses&>(userDataOpt.value()->second.myIp_);//data race
-                if(std::find(ipAddresses.begin(), ipAddresses.end(), socketData->get_ip()) == ipAddresses.end())
-                {
-                    ipAddresses.push_back(socketData->get_ip());
-                }
                 myServer.insert_socket(socketData, userDataOpt.value());
                 send_command(socketData, command::SUCCESS_LOG_IN);
             }
