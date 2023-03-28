@@ -33,8 +33,10 @@ set_target_properties(${EXEC_NAME} PROPERTIES
     )
 
 target_compile_options(${EXEC_NAME} PRIVATE
-    -Wall -Wextra -Wpedantic -std=c++17 
-    
+    -Wall 
+    -Wextra
+    -Wpedantic 
+    -std=c++17 
     -DSERVER_ENABLE_HANDLER_TRACKING
     -DDB_LOG_SEVERITY=info
     -DSERVER_LOG_SEVERITY=info

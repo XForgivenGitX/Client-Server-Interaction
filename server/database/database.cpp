@@ -1,6 +1,5 @@
 #include "database.hpp"
 
-
 namespace db
 {
     user_data::user_data(const name_t &name, const pass_t &pass, const anet::ip_type& ip, id_type id)

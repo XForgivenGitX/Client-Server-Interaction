@@ -18,34 +18,34 @@ namespace db
     typedef std::string name_t;
     typedef std::string pass_t;
     typedef std::size_t id_type;
-
-    struct user_data
+    typedef std::map<name_t, user_data> users_tree;
+    typedef users_tree::const_iterator users_tree_it;
+    typedef std::unordered_map<anet::socket_data_ptr, users_tree_it> activeSockets;
+    
+    
+    struct user_data_for_access
+    {
+        name_t name_;
+        pass_t pass_;
+        user_data_for_access(const name_t& name, const pass_t pass)
+            : name_(name), pass_(pass){}
+    };
+    
+    
+    struct user_data : public user_data_for_access
     {
         typedef std::vector<anet::ip_type> ip_addresses;
         
     public:
-        name_t name_;
-        pass_t pass_;
         ip_addresses myIp_;
         id_type id_;
     
     public:
         user_data(const name_t &name, const pass_t &pass, const anet::ip_type& ip, id_type id);
-        // auto operator<=>(const user_input_data&) const = default;
-        bool operator<(const user_data &rhs) const
-        {
-            return name_ < rhs.name_;
-        }
     };
 
     struct server_database : public boost::noncopyable
     {
-        typedef std::map<name_t, user_data> users_tree;
-        typedef users_tree::const_iterator users_tree_it;
-        
-        typedef std::set<name_t> names_tree;//del
-        typedef std::unordered_map<anet::socket_data_ptr, users_tree_it> activeSockets;
-
     private:
         users_tree userData_;
         names_tree userNames_;
@@ -80,20 +80,6 @@ namespace db
         {
             std::lock_guard lock(activeSocketsMut);
             activeSockets_.erase(socketData);
-        }
-        
-        bool find_and_insert_name(const name_t& name)
-        {
-            std::lock_guard lock(userNamesMut);
-            bool isFind = userNames_.find(name) != userNames_.end();
-            if(isFind) userNames_.insert(name);
-            return isFind;
-        }
-        
-        void erase_name(const name_t& name)
-        {
-            std::lock_guard lock(userNamesMut);
-            userNames_.erase(name);
         }
     };
 
