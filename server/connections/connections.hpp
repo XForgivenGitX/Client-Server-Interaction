@@ -1,6 +1,5 @@
 #pragma once
 #include "database.hpp"
-#include "i_channels.hpp"
 #include "listen_connect.hpp"
 #include <boost/asio/thread_pool.hpp>
 #include <boost/serialization/singleton.hpp>
@@ -14,9 +13,8 @@ namespace server
         using db::server_database::erase_user;
         using db::server_database::insert_socket;
         using db::server_database::erase_socket;
-        using db::server_database::find_and_insert_name;
+        using db::server_database::find_name;
         using db::server_database::check_user_data;
-        using db::server_database::erase_name;
     
     private:
         io__::thread_pool pool_;
@@ -28,7 +26,7 @@ namespace server
         
     public:
         void join();
-        void start_accepting_connections(anet::port_t port);
+        void start_accepting_connections(anet::port_t port, ILobby_ptr lobby);
 
     private:
         void start_signal_set(anet::socket_data_ptr& listenerSocket);

@@ -2,30 +2,6 @@
 
 namespace db
 {
-    user_data::user_data(const name_t &name, const pass_t &pass)
-        : name_(name), pass_(pass) {}
-
-    server_database::insert_user_return_v server_database::insert_user(const user_data &user)
-    {
-#ifdef SERVER_ENABLE_HANDLER_TRACKING
-        BOOST_LOG_TRIVIAL(DB_LOG_SEVERITY) 
-            << lg::build_log("database-server: insert user", 
-            "name: " + user.name_,
-            "pass: " + user.pass_);
-#endif
-        std::lock_guard lock(userDataMut);
-        return userData_.insert(std::make_pair(user.name_, user));
-    }
-
-    void server_database::erase_user(const name_t &user)
-    {
-#ifdef SERVER_ENABLE_HANDLER_TRACKING
-        BOOST_LOG_TRIVIAL(DB_LOG_SEVERITY) 
-            << lg::build_log("database-server: erase user", "name: " + user);
-#endif
-        std::lock_guard lock(userDataMut);
-        userData_.erase(user);
-    }
 
     // bool db::lobby_database::is_contains_room_name(const name_t &name) const
     // {

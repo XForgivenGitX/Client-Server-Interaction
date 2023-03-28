@@ -1,6 +1,5 @@
 #pragma once
 #include "socket_data.hpp"
-
 namespace anet
 {
     struct connection

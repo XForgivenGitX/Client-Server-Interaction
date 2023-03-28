@@ -8,6 +8,7 @@
 #include <boost/log/sources/severity_logger.hpp>
 #include <boost/log/sources/record_ostream.hpp>
 #include <boost/log/utility/setup/console.hpp>
+#include "protocol.hpp"
 
 namespace lg
 {
@@ -40,10 +41,8 @@ namespace lg
         (stream << ... << add_format(std::forward<Args>(args))) << "\n\n";
         return stream.str();
     }
-    
+    void init_logger();
     const char *address_cat(const char *lhs, const void *rhs);
     std::string boolalpha_cast(bool rhs);
-    void init_logger();
-
-
+    std::string command_to_str(common::command cmd);
 }

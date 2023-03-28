@@ -1,15 +1,16 @@
 #include "connections.hpp"
-#include "chat_lobby.hpp"
+
 
 namespace server
 {
     server_control_block::server_control_block()
-        : pool_(boost::thread::hardware_concurrency()), lobby_(std::make_shared<server::main_lobby>())
+        : pool_(boost::thread::hardware_concurrency()), lobby_(nullptr)
     {
     }
 
-    void server_control_block::start_accepting_connections(anet::port_t port)
+    void server_control_block::start_accepting_connections(anet::port_t port, ILobby_ptr lobby)
     {
+        lobby_ = lobby;
         auto tcpListener = std::make_unique<anet::tcp_listener>(pool_.get_executor(), anet::end_point_wrapper{port, io__::ip::tcp::v4()});
         auto &listenerSocket = tcpListener->socketData_;
         accept_connections(std::move(tcpListener));
@@ -79,6 +80,6 @@ namespace server
 #endif
         pool_.stop();
         listenerSocket->shutdown();
-        // lobby_->leave_all_users();
+        lobby_->leave_all();
     }
 }

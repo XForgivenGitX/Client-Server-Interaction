@@ -32,4 +32,29 @@ namespace lg
         if(rhs) return "true";
         else return "false";
     }
+  
+    std::string command_to_str(common::command cmd)
+    {
+        using namespace common;
+        switch(cmd)
+        {
+        case command::REGISTER:             return "REGISTER";
+        case command::LOG_IN:               return "LOG_IN";
+        case command::ERROR_REGISTER:       return "ERROR_REGISTER";
+        case command::ERROR_LOG_IN:         return "ERROR_LOG_IN";
+        case command::SUCCESS_REGISTER:     return "SUCCESS_REGISTER";
+        case command::SUCCESS_LOG_IN:       return "SUCCESS_LOG_IN";
+        case command::CREATE_ROOM:          return "CREATE_ROOM";
+        case command::SUCCESS_CREATE_ROOM:  return "SUCCESS_CREATE_ROOM";
+        case command::ERROR_CREATE_ROOM:    return "ERROR_CREATE_ROOM";
+        case command::JOIN_ROOM:            return "JOIN_ROOM";
+        case command::SUCCESS_JOIN_ROOM:    return "SUCCESS_JOIN_ROOM";
+        case command::ERROR_JOIN_ROOM:      return "ERROR_JOIN_ROOM";
+        case command::SEND_MESSAGE:         return "SEND_MESSAGE";
+        case command::RECEIVE_MESSAGE:      return "RECEIVE_MESSAGE";
+        case command::DETACH_ROOM:          return "DETACH_ROOM";
+        default:                            return "UNKNOWN";
+        }
+    }
+
 }

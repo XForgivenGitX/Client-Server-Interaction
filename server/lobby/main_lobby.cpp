@@ -1,4 +1,5 @@
-#include "chat_lobby.hpp"
+#include "main_lobby.hpp"
+#include "connections.hpp"
 
 //find n insrt
 namespace
@@ -17,10 +18,10 @@ namespace server
 
     void main_lobby::leave_user(anet::socket_data_ptr &socketData)
     {
-    
+        myServer.erase_socket(socketData);
     }
 
-    void main_lobby::send_command(anet::socket_data_ptr &socketData, cmd_type cmd)
+    void main_lobby::send_command(anet::socket_data_ptr &socketData, cmd_type cmd)//
     {
         socketData->send_buffer_ = common::assemble_package(cmd);
         anet::send_receive::send(socketData, {send_command_handler, this});
@@ -36,10 +37,9 @@ namespace server
                 "pack: " + socketData->send_buffer_,
                 "status: " + error_c.message());
 #endif
-        
         if (error_c)
         {
-            return;
+            leave_user(socketData);
         }
         else
         {
@@ -63,7 +63,8 @@ namespace server
 #endif
         if (error_c || !splitedPack.isMatched())
         {
-           return;
+            leave_user(socketData);
+            return;
         }
         switch (splitedPack.get_command())
         {
@@ -71,16 +72,11 @@ namespace server
         {
             auto name = splitedPack.get_argument(protocol::USER_NAME_INDEX);
             auto pass = splitedPack.get_argument(protocol::USER_PASS_INDEX);
-            if (!myServer.find_and_insert_name(name))
+            if (!myServer.find_name(name))
             {
                 auto newUser = myServer.insert_user
-                (db::user_data{
-                    name,
-                    pass,
-                    socketData->get_ip()
-                });
-                myServer.insert_socket(socketData, newUser.first);
-                send_command(socketData, command::SUCCESS_REGISTER);
+                        (std::make_shared<user_account>(name, pass, shared_from_this()));
+                newUser->send_command(socketData, command::SUCCESS_REGISTER);
             }
             else
             {
@@ -95,8 +91,8 @@ namespace server
             auto pass = splitedPack.get_argument(protocol::USER_PASS_INDEX);
             if (auto userDataOpt = myServer.check_user_data(name, pass); userDataOpt)
             {
-                myServer.insert_socket(socketData, userDataOpt.value());
-                send_command(socketData, command::SUCCESS_LOG_IN);
+                myServer.insert_socket(socketData);
+                userDataOpt.value()->send_command(socketData, command::SUCCESS_LOG_IN);
             }
             else
             {
@@ -105,13 +101,6 @@ namespace server
         }
         break;
 
-        case command::CREATE_ROOM:
-        {
-            auto name = splitedPack.get_argument(protocol::ROOM_NAME_INDEX);
-            
-        }
-        break;
-        
         default:
 #ifdef SERVER_ENABLE_HANDLER_TRACKING
         BOOST_LOG_TRIVIAL(error) 

@@ -8,11 +8,17 @@
 
 namespace common
 {
+    typedef std::string name_t;
+    typedef std::string pass_t;
+    typedef std::string msg_type;
+    
     namespace protocol
     {
-        constexpr unsigned COMMAND_INDEX = 1;
-        constexpr unsigned ARGUMENT_INDEX = 2;
-        constexpr unsigned INDET_VALUE = 1;
+        constexpr unsigned COMMAND_MATCH_INDEX = 1;
+        constexpr unsigned ARGUMENT_MATCH_INDEX = 2;
+        constexpr unsigned SUBMATCH_VAL = 1;
+        constexpr unsigned COMMAND_INDEX_IN_PACKAGE = 1;
+        
         constexpr unsigned USER_NAME_INDEX = 0;
         constexpr unsigned USER_PASS_INDEX = 1;
         constexpr unsigned ROOM_NAME_INDEX = 0;

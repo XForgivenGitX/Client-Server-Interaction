@@ -24,13 +24,13 @@ namespace common
             isMatchedPack = false;
             return;
         }
-        cmd_ = static_cast<command>(std::stoi(tokens[protocol::COMMAND_INDEX]));
-        auto arg_token = tokens[protocol::ARGUMENT_INDEX];
+        cmd_ = static_cast<command>(std::stoi(tokens[protocol::COMMAND_MATCH_INDEX]));
+        auto arg_token = tokens[protocol::ARGUMENT_MATCH_INDEX];
         args_.resize(0);
         if (arg_token.matched)
         {
             std::copy(
-                std::sregex_token_iterator(arg_token.first, arg_token.second, args, protocol::INDET_VALUE),
+                std::sregex_token_iterator(arg_token.first, arg_token.second, args, protocol::SUBMATCH_VAL),
                 std::sregex_token_iterator{},
                 std::back_insert_iterator<args_t>(args_));
         }
