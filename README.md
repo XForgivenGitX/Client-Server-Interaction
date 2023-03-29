@@ -17,4 +17,4 @@ In the room, the user can send messages that will be delivered to all participan
 - Saving the message history of each room and sending it to new participants. 
 - Add the ability to display online participants and rooms to the user.
 ## Example
-![](https://github.com/XForgivenGitX/QuickChat/blob/master/example.png)
+<img src="https://github.com/XForgivenGitX/QuickChat/blob/master/example.png" wigth="25%"/>
