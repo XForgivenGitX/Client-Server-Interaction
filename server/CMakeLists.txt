@@ -4,25 +4,25 @@ cmake_minimum_required(VERSION 3.5)
 
 set(EXEC_NAME ${PROJECT_NAME}-server)
 
-set(${EXEC_NAME}_DIR_CONNECTIONS connections)
+set(${EXEC_NAME}_DIR_ACCEPTOR acceptor)
 set(${EXEC_NAME}_DIR_DATABASE database)
-set(${EXEC_NAME}_DIR_CHANNELS channels)
-set(${EXEC_NAME}_DIR_LOBBY lobby)
+set(${EXEC_NAME}_DIR_CHANNELS channel)
+set(${EXEC_NAME}_DIR_CONNECTIONS connections)
 
 set(${EXEC_NAME}_INCLUDE_DIRS 
     ${${EXEC_NAME}_DIR_DATABASE}
     ${${EXEC_NAME}_DIR_CHANNELS}
     ${${EXEC_NAME}_DIR_CONNECTIONS}
-    ${${EXEC_NAME}_DIR_LOBBY}
+    ${${EXEC_NAME}_DIR_ACCEPTOR}
     )
 
 set(${EXEC_NAME}_SRC
     ${${EXEC_NAME}_DIR_DATABASE}/database.cpp
-    ${${EXEC_NAME}_DIR_CHANNELS}/user_account.cpp
+    ${${EXEC_NAME}_DIR_CHANNELS}/chat_member.cpp
     ${${EXEC_NAME}_DIR_CHANNELS}/channel.cpp
-    ${${EXEC_NAME}_DIR_CONNECTIONS}/connections.cpp
-    ${${EXEC_NAME}_DIR_CONNECTIONS}/startup_server.cpp
-    ${${EXEC_NAME}_DIR_LOBBY}/main_lobby.cpp
+    ${${EXEC_NAME}_DIR_ACCEPTOR}/acceptor.cpp
+    ${${EXEC_NAME}_DIR_ACCEPTOR}/startup_server.cpp
+    ${${EXEC_NAME}_DIR_CONNECTIONS}/connections_manager.cpp
     )
 
 set(Boost_USE_STATIC_LIBS ON)

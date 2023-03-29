@@ -64,6 +64,7 @@ namespace common
         RECEIVE_MESSAGE,
 
         DETACH_ROOM,
+        SUCCESS_DETACH_ROOM,
     };
 
     struct splited_package

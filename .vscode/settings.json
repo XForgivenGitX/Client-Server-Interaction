@@ -74,6 +74,7 @@
         "typeindex": "cpp",
         "typeinfo": "cpp",
         "variant": "cpp",
-        "*.def": "cpp"
+        "*.def": "cpp",
+        "*.ipp": "cpp"
     }
 }

@@ -3,50 +3,50 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <map>
+#include <deque>
 #include <optional>
 #include <shared_mutex>
 #include <boost/noncopyable.hpp>
 
 #include "socket_data.hpp"
 #include "logger.hpp"
-#include "i_channels.hpp"
+#include "interface.hpp"
 
 namespace db
 {
-    struct server_database : public boost::noncopyable
+    struct users_database : virtual public boost::noncopyable
     {
-        typedef std::map<common::name_t, server::IUser_ptr> users_tree;
+        typedef std::map<common::name_t, server::IChat_member_ptr> users_tree;
         typedef std::unordered_set<anet::socket_data_ptr> active_sockets_t;
     
     private:
         users_tree userData_;
         active_sockets_t activeSockets_;
-    
-    private:
         mutable std::shared_mutex userDataMut, activeSocketsMut;
 
     public:
-        std::optional<server::IUser_ptr> check_user_data(const common::name_t& name, const common::pass_t& pass) const
+        std::optional<server::IChat_member_ptr> check_user_data(const common::name_t& name, const common::pass_t& pass) const
         {
             std::shared_lock lock(userDataMut);
             auto it = userData_.find(name);
             return ((it != userData_.end() && (it->second->pass_ == pass)) ? 
-                            std::optional<server::IUser_ptr>(it->second) : std::nullopt);
+                            std::optional<server::IChat_member_ptr>(it->second) : std::nullopt);
         }
 
         bool find_name(const common::name_t& name) const
         {
             return userData_.find(name) != userData_.end();
         }
+    
     public:
-        void insert_user(server::IUser_ptr user)
+        void insert_user(server::IChat_member_ptr user) //
         {
             std::unique_lock lock(userDataMut);
             auto ret_val = userData_.insert(std::make_pair(user->name_, user));
 #ifdef SERVER_ENABLE_HANDLER_TRACKING
             lock.unlock();
             BOOST_LOG_TRIVIAL(DB_LOG_SEVERITY) 
-                << lg::build_log("database-server: insert user", 
+                << lg::build_log("user_database: insert user", 
                 "name: " + user->name_,
                 "pass: " + user->pass_,
                 "status: " + lg::boolalpha_cast(ret_val.second));
@@ -59,12 +59,13 @@ namespace db
         {
 #ifdef SERVER_ENABLE_HANDLER_TRACKING
             BOOST_LOG_TRIVIAL(DB_LOG_SEVERITY) 
-                << lg::build_log("database-server: erase user", 
+                << lg::build_log("user_database: erase user", 
                 "name: " + user);
 #endif
             std::lock_guard lock(userDataMut);
             userData_.erase(user);
         }
+        
         void insert_socket(const anet::socket_data_ptr& socketData)
         {
             std::lock_guard lock(activeSocketsMut);
@@ -76,24 +77,22 @@ namespace db
             activeSockets_.erase(socketData);
         }
 
-        void shutdown_all_sockets()
+       void for_each_socket(std::function<void(const anet::socket_data_ptr&)> func)
         {
-            std::lock_guard lock(activeSocketsMut);
+            std::shared_lock lock(activeSocketsMut);
             for(auto& socket : activeSockets_)
-                socket->shutdown();
+                func(socket);
         }
     };
 
     
     
-    struct lobby_database : public boost::noncopyable
+    struct channels_database : virtual public boost::noncopyable
     {
         typedef std::unordered_map<common::name_t, server::IChannel_ptr> channels;
     
     private:
         channels channels_;
-
-    private:
         mutable std::shared_mutex channelsMut;
 
     public:
@@ -116,7 +115,7 @@ namespace db
 #ifdef SERVER_ENABLE_HANDLER_TRACKING
             lock.unlock();
             BOOST_LOG_TRIVIAL(DB_LOG_SEVERITY) 
-                << lg::build_log("database-lobby: insert channel", 
+                << lg::build_log("channels-database: insert channel", 
                 "name: " + name,
                 "status: " + lg::boolalpha_cast(ret_val.second));
 #endif
@@ -138,30 +137,33 @@ namespace db
 
     struct channel_database : public boost::noncopyable
     {
-        typedef std::unordered_set<anet::socket_data_ptr> active_sockets_t;
+        typedef std::unordered_map<anet::socket_data_ptr, server::IChat_member_ptr> active_members_t;
+        typedef std::pair<const anet::socket_data_ptr, server::IChat_member_ptr> channelMembers;
 
     public:
-        active_sockets_t activeSockets;
+        active_members_t activeSockets_;
+        std::deque<common::msg_type> channelHistory_;
         mutable std::shared_mutex activeSocketsMut;
 
-        void for_each_socket(std::function<void(anet::socket_data_ptr)> func)
+        void for_each_member(std::function<void(channelMembers&)> func)
         {
             std::shared_lock lock(activeSocketsMut);
-            std::for_each(activeSockets.begin(), activeSockets.end(), func);
-        }
+            for(auto& member : activeSockets_)
+                func(member);
+        }   
     
     public:
-        void insert_socket(anet::socket_data_ptr& socketData)
+        void insert_socket(anet::socket_data_ptr& socketData, server::IChat_member_ptr userDesc)
         {
             std::lock_guard lock(activeSocketsMut);
-            if(!activeSockets.insert(socketData).second) 
-                throw std::runtime_error("error adding a new chat room");
+            if(!activeSockets_.insert({socketData, userDesc}).second) 
+                throw std::runtime_error("error adding a new member in room");
         }
 
-        void erase_socket(anet::socket_data_ptr& socketData)
+        void erase_socket(const anet::socket_data_ptr& socketData)
         {
             std::lock_guard lock(activeSocketsMut);
-            activeSockets.erase(socketData);
+            activeSockets_.erase(socketData);
         }
     };
 }

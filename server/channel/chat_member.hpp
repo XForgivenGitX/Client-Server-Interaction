@@ -1,16 +1,17 @@
 #pragma once
-#include "i_channels.hpp"
+#include "interface.hpp"
 #include "send_receive.hpp"
 
 namespace server
 {
-    struct user_account : public IUser
+    struct chat_member : 
+        public IChat_member,
+        public std::enable_shared_from_this<chat_member>
     {
-        ILobby_ptr myLobby_;
-        IChannel_ptr currentChannel_;
+        IConnection_ptr connectManager_;
         
-        user_account(const common::name_t &name, const common::pass_t &pass, ILobby_ptr myLobby)
-            : IUser(name, pass), myLobby_(myLobby), currentChannel_(nullptr)  {}
+        chat_member(const common::name_t &name, const common::pass_t &pass, IConnection_ptr connectManager)
+            : IChat_member(name, pass), connectManager_(connectManager)  {}
 
     public:
         void send_command(anet::socket_data_ptr &socketData, common::command cmd) override
@@ -32,7 +33,7 @@ namespace server
 #endif
             if (error_c)
             {
-                myLobby_->leave_user(socketData);
+                connectManager_->leave_user(socketData);
             }
             else
             {
@@ -56,7 +57,7 @@ namespace server
 #endif
             if (error_c || !splitedPack.isMatched())
             {
-                myLobby_->leave_user(socketData);
+                connectManager_->leave_user(socketData);
                 return;
             }
             switch (splitedPack.get_command())
@@ -64,7 +65,7 @@ namespace server
             case command::CREATE_ROOM:
             {
                 auto name = splitedPack.get_argument(protocol::ROOM_NAME_INDEX);
-                if(myLobby_->add_channel(name))
+                if(connectManager_->add_channel(name))
                 {
                     send_command(socketData, command::SUCCESS_CREATE_ROOM);
                 }
@@ -78,29 +79,13 @@ namespace server
             case command::JOIN_ROOM:
             {
                 auto name = splitedPack.get_argument(protocol::ROOM_NAME_INDEX);
-                if(auto channelOpt = myLobby_->join_channel(name, socketData); channelOpt)
-                {
-                    currentChannel_ = channelOpt.value();
-                    send_command(socketData, command::SUCCESS_JOIN_ROOM);
-                }
-                else
+                if(!connectManager_->join_channel(name, socketData, shared_from_this()))
                 {
                     send_command(socketData, command::ERROR_JOIN_ROOM);
                 }
             }
             break;
             
-            case command::SEND_MESSAGE:
-            {
-                auto msg = splitedPack.get_argument(protocol::MESSAGE_INDEX);
-                if(currentChannel_ != nullptr)
-                {
-                    currentChannel_->send_all(msg);
-                    anet::send_receive::receive(socketData, {receive_command_handler, this});
-                }
-            }
-            break;
-
             default:
 #ifdef SERVER_ENABLE_HANDLER_TRACKING
                 BOOST_LOG_TRIVIAL(error)

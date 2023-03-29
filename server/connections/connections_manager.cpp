@@ -1,37 +1,33 @@
-#include "main_lobby.hpp"
-#include "connections.hpp"
-
-// find n insrt
-namespace
-{
-    auto &myServer = server::server_control_block::get_mutable_instance();
-}
+#include "connections_manager.hpp"
 
 namespace server
 {
-
-    void main_lobby::enter_user(anet::socket_data_ptr &socketData)
+    void connections_manager::enter_user(anet::socket_data_ptr &socketData)
     {
-        myServer.insert_socket(socketData);
-        anet::send_receive::receive(socketData, {receive_command_handler, this});
+        insert_socket(socketData);
+        anet::send_receive::receive(socketData, {&connections_manager::receive_command_handler, this});
     }
 
-    void main_lobby::leave_user(anet::socket_data_ptr &socketData)
+    void connections_manager::leave_user(anet::socket_data_ptr &socketData)
     {
-        myServer.erase_socket(socketData);
+        erase_socket(socketData);
     }
-    void main_lobby::leave_all()
+    void connections_manager::leave_all()
     {
-        myServer.shutdown_all_sockets();
+        for_each_socket([this](auto& socket)
+        {
+            socket->shutdown();
+            erase_socket(socket);
+        });
     }
 
-    void main_lobby::send_command(anet::socket_data_ptr &socketData, cmd_type cmd) //
+    void connections_manager::send_command(anet::socket_data_ptr &socketData, cmd_type cmd) //
     {
         socketData->send_buffer_ = common::assemble_package(cmd);
-        anet::send_receive::send(socketData, {send_command_handler, this});
+        anet::send_receive::send(socketData, {&connections_manager::send_command_handler, this});
     }
 
-    void main_lobby::send_command_handler(anet::socket_data_ptr &socketData, const anet::err_c &error_c)
+    void connections_manager::send_command_handler(anet::socket_data_ptr &socketData, const anet::err_c &error_c)
     {
 #ifdef SERVER_ENABLE_HANDLER_TRACKING
         BOOST_LOG_TRIVIAL(info)
@@ -47,11 +43,11 @@ namespace server
         }
         else
         {
-            anet::send_receive::receive(socketData, {receive_command_handler, this});
+            anet::send_receive::receive(socketData, {&connections_manager::receive_command_handler, this});
         }
     }
 
-    void main_lobby::receive_command_handler(anet::socket_data_ptr &socketData, const anet::err_c &error_c)
+    void connections_manager::receive_command_handler(anet::socket_data_ptr &socketData, const anet::err_c &error_c)
     {
         using namespace common;
         transf_package splitedPack;
@@ -76,10 +72,10 @@ namespace server
         {
             auto name = splitedPack.get_argument(protocol::USER_NAME_INDEX);
             auto pass = splitedPack.get_argument(protocol::USER_PASS_INDEX);
-            if (!myServer.find_name(name))
+            if (!find_name(name))
             {
-                auto newUser = std::make_shared<user_account>(name, pass, shared_from_this());
-                myServer.insert_user(newUser);
+                auto newUser = std::make_shared<chat_member>(name, pass, shared_from_this());
+                insert_user(newUser);
                 newUser->send_command(socketData, command::SUCCESS_REGISTER);
             }
             else
@@ -93,7 +89,7 @@ namespace server
         {
             auto name = splitedPack.get_argument(protocol::USER_NAME_INDEX);
             auto pass = splitedPack.get_argument(protocol::USER_PASS_INDEX);
-            if (auto userDataOpt = myServer.check_user_data(name, pass); userDataOpt)
+            if (auto userDataOpt = check_user_data(name, pass); userDataOpt)
             {
                 userDataOpt.value()->send_command(socketData, command::SUCCESS_LOG_IN);
             }
