@@ -3,20 +3,25 @@
 
 namespace server
 {
-    class server_session : public boost::noncopyable
+    struct server_control_block : public boost::noncopyable, public boost::serialization::singleton<server_control_block>
     {
     private:
-        io__::io_context &ios_;
-        const anet::end_point_wrapper endPoint_;
-        chat_room room_;
-
+        io__::thread_pool pool_;
+        io__::io_context signalIos_;
+        lobby_ptr lobby_;
+        db::server_database serverDataBase_{};
+        
     public:
-        server_session(io__::io_context &ios, unsigned short port);
-        void start();
-
+        server_control_block();
+        
+    public:
+        void join();
+        void start_accepting_connections(unsigned short port);
+        
     private:
-        void accepted_connection_handler(anet::tcp_listener_ptr &&listener, const boost::system::error_code &error) noexcept;
+        void signal_handler(anet::socket_data_ptr, const boost::system::error_code, int);
         void accept_connections(anet::tcp_listener_ptr &&listener) noexcept;
-        void authorization_handler(anet::socket_data_ptr socketData, const boost::system::error_code &error) noexcept;
+        void accepted_connection_handler(anet::tcp_listener_ptr &&listener, 
+                                const boost::system::error_code &error) noexcept;
     };
 }

@@ -5,33 +5,48 @@
 #include <regex>
 #include <optional>
 #include <algorithm>
+#include <boost/system/error_code.hpp>
+
+#define COMMAND_INDEX 1
+#define ARGUMENT_INDEX 2
+#define INDET_VALUE 1
+#define NAME_INDEX 0
+#define PASS_INDEX 1
 
 namespace common
 {
     enum class protocol : unsigned
     {
-        MESSAGE_LOW_LEVEL = 1,
-        MESSAGE_HIGH_LEVEL = 50,
-        NAME_LOW_LEVEL = 5,
-        NAME_HIGH_LEVEL = 20,
-        COMMAND_INDEX = 1,
-        ARGUMENT_INDEX = 2
-        //...
+        MESSAGE_LOW_LENGHT = 1,
+        MESSAGE_HIGH_LENGHT = 50,
+        ROOM_NAME_LOW_LENGHT = 5,
+        ROOM_NAME_HIGH_LENGHT = 20,
+        NAME_LOW_LENGHT = 5,
+        NAME_HIGH_LENGHT = 20
     };
-
     enum class command : unsigned
     {
-        REPEAT_REQUEST,
-        CONNECT_REQUEST,
-        SEND_REQUEST,
-        AUTHORIZ_REQUEST,
-        DISCONNECT_REQUEST,
+        LOG_IN_REQ,
+        ECHO_LOG_IN_REQ,
+        LOG_IN_RESP,
+        SUCCESS_LOG_IN_RESP,
 
-        REPEAT_STATUS,
-        CONNECT_STATUS,
-        SEND_STATUS,
-        AUTHORIZ_STATUS,
-        DISCONNECT_STATUS
+        REGISTER_REQ,
+        ECHO_REGISTER_REQ,
+        REGISTER_RESP,
+        SUCCESS_REG_RESP,
+
+        CREATE_ROOM_REQ,
+        SUCCESS_CREATE_ROOM_RESP,
+        ERROR_CREATE_ROOM_RESP,
+
+        JOIN_ROOM_REQ,
+        SUCCESS_JOIN_ROOM_RESP,
+        ERROR_JOIN_ROOM_RESP,
+
+        SEND_MESSAGE,
+        DETACH_ROOM_REQ,
+        DETACH_ROOM_RESP,
     };
 
     struct splited_frame
@@ -42,31 +57,10 @@ namespace common
         command cmd_;
         args_t args_;
     };
-    
-    std::optional<splited_frame> split_frame(const std::string &frame);
+    typedef std::optional<common::splited_frame> splited_frame_opt_t;
+
+    splited_frame_opt_t disassemble_frame(const std::string &frame);
+    std::string assemble_frame(common::command cmd);
+    std::string assemble_frame(command cmd, std::vector<std::string> args);
+    splited_frame_opt_t parse_and_chek_errors(const std::string &frame, const boost::system::error_code &error);
 }
-
-
-/*
-struct bad_server : std::exception
-{
-    virtual const char *what() const noexcept
-    {
-        return "server crashed on the initiative of the developer";
-    }
-    virtual ~bad_server() = default;
-};
-
-template <typename T>
-struct singleton
-{
-    static T &get_instanse()
-    {
-        static T instance;
-        return instance;
-    }
-
-protected:
-    singleton() = default;
-};
-*/

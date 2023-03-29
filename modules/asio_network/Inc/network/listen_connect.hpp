@@ -5,11 +5,14 @@ namespace anet
 {
     struct connection
     {
-        typedef utility::task_wrapped<void(socket_data_endpoint_ptr &&, const boost::system::error_code &)> callback_func_t;
+        typedef utility::task_wrapped<void(socket_data_endpoint_ptr &&, 
+                                    const boost::system::error_code &)> callback_func_t;
 
     public:
-        static void connection_request(socket_data_endpoint_ptr &&endPoint, callback_func_t &&);
-        static void async_connection_request(io__::io_context &, socket_data_endpoint_ptr &&, callback_func_t &&);
+        static void connection_request(socket_data_endpoint_ptr &&endPoint, 
+                                        callback_func_t &&);
+        static void async_connection_request(io__::any_io_executor , 
+                                    socket_data_endpoint_ptr &&, callback_func_t &&);
     };
 
     //_____
@@ -21,8 +24,10 @@ namespace anet
         socket_data_ptr socketData_;
 
     public:
-        explicit tcp_listener(io__::io_context &ios, const end_point_wrapper &endPoint);
-        explicit tcp_listener(io__::io_context &ios, end_point_wrapper &&endPoint);
+        explicit tcp_listener(io__::any_io_executor ios, 
+                                    const end_point_wrapper &endPoint);
+        explicit tcp_listener(io__::any_io_executor ios, 
+                                    end_point_wrapper &&endPoint);
     };
     typedef std::unique_ptr<tcp_listener> tcp_listener_ptr;
 
@@ -30,10 +35,12 @@ namespace anet
 
     struct listen
     {
-        typedef utility::task_wrapped<void(tcp_listener_ptr &&, const boost::system::error_code &)> callback_func_t;
+        typedef utility::task_wrapped<void(tcp_listener_ptr &&, 
+                                    const boost::system::error_code &)> callback_func_t;
 
     public:
-        static void accepting_connection(tcp_listener_ptr &&, callback_func_t &&handler);
+        static void accepting_connection(tcp_listener_ptr &&, 
+                                        callback_func_t &&handler);
     private:
         struct callback_function_wrapper;
     };
@@ -45,7 +52,8 @@ namespace anet
         callback_func_t functionUnwrapped_;
 
     public:
-        explicit callback_function_wrapper(tcp_listener_ptr &&listener, callback_func_t &&handler);
+        explicit callback_function_wrapper(tcp_listener_ptr &&listener, 
+                                            callback_func_t &&handler);
         void operator()(const boost::system::error_code &error) noexcept;
     };
 }
