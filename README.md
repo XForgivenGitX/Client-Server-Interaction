@@ -8,7 +8,7 @@ It implements convenient methods for reading and writing to the socket, listenin
 - Correct socket shutdown.
 
 ## Server
-The server accepts incoming connections and sends them to the lobby for further authorization. The user can choose between registration and authorization. After authorization, the user has a choice: 
+The server accepts incoming connections and sends them to the lobby for further authorization. The user can choose between registration and authorization. After authorization, the user has the following choice: 
 - Create a room. 
 - Join an existing one.\
 In the room, the user can send messages that will be delivered to all participants in the room. When a user logs in and out, corresponding messages are sent to all chat participants.
