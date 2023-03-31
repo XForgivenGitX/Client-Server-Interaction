@@ -67,5 +67,5 @@ namespace db
     public:
         void insert_socket(anet::socket_data_ptr& socketData, server::IChat_member_ptr userDesc);
         void erase_socket(const anet::socket_data_ptr& socketData);
-    }
+    };
 }
