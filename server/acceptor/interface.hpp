@@ -15,12 +15,13 @@ namespace server
         virtual ~IChat_member() = default;
     };
     typedef std::shared_ptr<IChat_member> IChat_member_ptr;
+    typedef std::pair<const anet::socket_data_ptr, server::IChat_member_ptr> channelMember;
 
     struct IChannel
     {
         virtual void send_all(const common::msg_type&) = 0;
         virtual void enter_user(anet::socket_data_ptr &, IChat_member_ptr) = 0;
-        virtual void leave_user(anet::socket_data_ptr &) = 0;
+        virtual void leave_user(channelMember &) = 0;
         virtual void leave_all() = 0;
         virtual ~IChannel() = default;
     };

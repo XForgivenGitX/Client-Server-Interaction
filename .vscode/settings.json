@@ -75,6 +75,7 @@
         "typeinfo": "cpp",
         "variant": "cpp",
         "*.def": "cpp",
-        "*.ipp": "cpp"
+        "*.ipp": "cpp",
+        "cfenv": "cpp"
     }
 }

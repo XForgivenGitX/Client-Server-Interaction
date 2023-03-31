@@ -8,7 +8,7 @@ namespace server
 		insert_socket(socketData, member);
 	}
 
-	void channel::leave_user(channelMembers &socketMember_)
+	void channel::leave_user(channelMember &socketMember_)
 	{
 		auto& [socket, member] = socketMember_;
 		member->send_command
@@ -35,7 +35,7 @@ namespace server
 	{
 		if (error_c)
 		{
-			leave_user(socketData);
+			//leave_user(socketData);
 		}
 	}
 }
