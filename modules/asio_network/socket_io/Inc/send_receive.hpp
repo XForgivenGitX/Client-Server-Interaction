@@ -20,15 +20,15 @@ namespace anet
     private:
         struct callback_function_wrapper;
         typedef std::function<void(const err_c &, 
-                                    std::size_t, callback_function_wrapper&)> called_function;
+                                    std::size_t, callback_function_wrapper*)> called_function;
         
         static void send_called_function(const err_c &error_c, 
                                                     std::size_t bytesTransferred, 
-                                                        callback_function_wrapper& wrapper);
+                                                        callback_function_wrapper* wrapper);
         
         static void receive_called_function(const err_c &error_c, 
                                                     std::size_t bytesTransferred, 
-                                                        callback_function_wrapper& wrapper);
+                                                        callback_function_wrapper* wrapper);
     private:
         send_receive() = delete;
     };

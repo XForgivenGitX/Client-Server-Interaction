@@ -26,7 +26,7 @@ void send_receive::receive(const socket_data_ptr& socketData,
 }
 
 void send_receive::send_called_function(const err_c &error_c, 
-                                [[maybe_unused]] std::size_t bytesTransferred, callback_function_wrapper& wrapper)
+                                [[maybe_unused]] std::size_t bytesTransferred, callback_function_wrapper* wrapper)
 {
 #ifdef NETWORK_ENABLE_HANDLER_TRACKING
     BOOST_LOG_TRIVIAL(info)
@@ -37,13 +37,13 @@ void send_receive::send_called_function(const err_c &error_c,
                 "status: " + error_c.message());
     
 #endif
-    wrapper.functionWrapped_(wrapper.socketData_, error_c);
+    wrapper->functionWrapped_(wrapper->socketData_, error_c);
 }
 
 void send_receive::receive_called_function(const err_c &error_c, 
-                                [[maybe_unused]] std::size_t bytesTransferred, callback_function_wrapper& wrapper)
+                                [[maybe_unused]] std::size_t bytesTransferred, callback_function_wrapper* wrapper)
 {
-    wrapper.socketData_->receive_buffer_.resize(bytesTransferred);
+    wrapper->socketData_->receive_buffer_.resize(bytesTransferred);
 #ifdef NETWORK_ENABLE_HANDLER_TRACKING
     BOOST_LOG_TRIVIAL(info)
             << lg::build_log("receive package",
@@ -52,7 +52,7 @@ void send_receive::receive_called_function(const err_c &error_c,
                 "pack: " + wrapper.socketData_->receive_buffer_, 
                 "status: " + error_c.message());
 #endif
-    wrapper.functionWrapped_(wrapper.socketData_, error_c);
+    wrapper->functionWrapped_(wrapper->socketData_, error_c);
 }
 
 send_receive::callback_function_wrapper::callback_function_wrapper
@@ -63,7 +63,7 @@ send_receive::callback_function_wrapper::callback_function_wrapper
 void send_receive::callback_function_wrapper::operator()
                                 (const err_c &error_c, std::size_t bytesTransferred)
 {
-    call_(error_c, bytesTransferred, *this);
+    call_(error_c, bytesTransferred, this);
 }
 
 }

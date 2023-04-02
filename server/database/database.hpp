@@ -14,10 +14,19 @@
 
 namespace db
 {
-    struct users_database : virtual public boost::noncopyable
+    struct users_database
     {
-        typedef std::map<common::name_t, server::IChat_member_ptr> users_tree;
-        typedef std::unordered_set<anet::socket_data_ptr> active_sockets_t;
+        typedef std::map<common::name_t, server::IChat_user_ptr> 
+            users_tree;
+        
+        typedef std::unordered_map<anet::socket_data_ptr, server::IChat_user_ptr> 
+            active_sockets_t;
+        
+        typedef std::function<void(const active_sockets_t::value_type&)> 
+            user_function_t;
+        
+        typedef std::optional<server::IChat_user_ptr>  
+            find_user_data_ret_v;
     
     private:
         users_tree userData_;
@@ -25,47 +34,65 @@ namespace db
         mutable std::shared_mutex userDataMut, activeSocketsMut;
 
     public:
-        std::optional<server::IChat_member_ptr> check_user_data(const common::name_t& name, const common::pass_t& pass) const;
-        bool find_name(const common::name_t& name) const;
-    
+        find_user_data_ret_v find_user_data(const common::name_t& name, const common::pass_t& pass) const;
+        bool is_user_name(const common::name_t& name) const;
+        
     public:
-        void insert_user(server::IChat_member_ptr user);
-        void erase_user(const common::name_t &user);
-        void insert_socket(const anet::socket_data_ptr& socketData);
+        void insert_socket(const anet::socket_data_ptr& socketData, server::IChat_user_ptr = nullptr);
         void erase_socket(const anet::socket_data_ptr& socketData);
-        void for_each_socket(std::function<void(const anet::socket_data_ptr&)> func);
+        void for_each_socket(user_function_t func);
+        server::IChat_user_ptr get_active_user_data(const anet::socket_data_ptr& socketData);  
+        
+        void insert_user(server::IChat_user_ptr user);
+        void erase_user(const common::name_t &user);
+        
     };
 
-    
-    struct channels_database : virtual public boost::noncopyable
+    struct channels_database
     {
-        typedef std::unordered_map<common::name_t, server::IChannel_ptr> channels;
-    
+        typedef std::unordered_map<common::name_t, server::IChannel_ptr> 
+            channels;
+        
+        typedef std::optional<server::IChannel_ptr> 
+            find_channel_ret_v;
+
     private:
         channels channels_;
         mutable std::shared_mutex channelsMut;
 
     public:
-        std::optional<server::IChannel_ptr> find_channel(const common::name_t& name);
+        find_channel_ret_v find_channel(const common::name_t& name);
+        bool is_channel_name(const common::name_t& name);
     
     public:
         void insert_channel(const common::name_t& name, server::IChannel_ptr new_channel);
         void erase_channel(const common::name_t& name);
     };
 
-    struct channel_database : public boost::noncopyable
+    struct channel_database
     {
-        typedef std::unordered_map<anet::socket_data_ptr, server::IChat_member_ptr> active_members_t;
+        typedef std::unordered_map<anet::socket_data_ptr, server::IChannel_member_ptr> 
+            active_members_t;
+        
+        typedef std::deque<common::msg_type> 
+            channel_history_t;
+        
+        typedef std::function<void(const active_members_t::value_type&)>
+            active_members_func;
 
-    public:
-        active_members_t activeSockets_;
-        std::deque<common::msg_type> channelHistory_;
-        mutable std::shared_mutex activeSocketsMut;
-
-        void for_each_member(std::function<void(server::channelMember&)> func);
+        typedef std::function<void(const channel_history_t::value_type&)>
+            channel_history_func;
     
+    private:
+        active_members_t activeSockets_;
+        channel_history_t channelHistory_;
+        mutable std::shared_mutex activeSocketsMut, channelHistoryMut;
+
     public:
-        void insert_socket(anet::socket_data_ptr& socketData, server::IChat_member_ptr userDesc);
-        void erase_socket(const anet::socket_data_ptr& socketData);
+        void insert_chat_member(const anet::socket_data_ptr& socketData, server::IChannel_member_ptr&& channelMember);
+        void erase_chat_member(const anet::socket_data_ptr& socketData);
+        void for_each_member(active_members_func func);
+        void for_each_history(channel_history_func func);
+        void add_message_to_history(const common::msg_type& msg);
     };
 }

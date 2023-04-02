@@ -9,7 +9,7 @@ namespace common
         return cmd_;
     }
 
-    splited_package::packet_t splited_package::get_argument(std::size_t argIndex) const
+    splited_package::packet_t splited_package::get_arg(std::size_t argIndex) const
     {
         return args_.at(argIndex);
     }

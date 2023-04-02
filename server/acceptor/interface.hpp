@@ -5,38 +5,72 @@
 
 namespace server
 {
-    struct IChat_member
+    struct IChat_user
     {
+    protected:
         common::name_t name_;
         common::pass_t pass_;
-        IChat_member(const common::name_t& name, const common::pass_t& pass)
-            : name_(name), pass_(pass) {}
-        virtual void send_command(anet::socket_data_ptr&, common::command) = 0;
-        virtual ~IChat_member() = default;
-    };
-    typedef std::shared_ptr<IChat_member> IChat_member_ptr;
-    typedef std::pair<const anet::socket_data_ptr, server::IChat_member_ptr> channelMember;
-
-    struct IChannel
-    {
-        virtual void send_all(const common::msg_type&) = 0;
-        virtual void enter_user(anet::socket_data_ptr &, IChat_member_ptr) = 0;
-        virtual void leave_user(channelMember &) = 0;
-        virtual void leave_all() = 0;
-        virtual ~IChannel() = default;
-    };
-    typedef std::shared_ptr<IChannel> IChannel_ptr;
-
-    struct IConnection
-    {
-        typedef std::optional<server::IChannel_ptr> join_channel_v;
         
-        virtual void enter_user(anet::socket_data_ptr &) = 0;
-        virtual bool add_channel(const common::name_t& name) = 0;
-        virtual bool join_channel(const common::name_t& name, anet::socket_data_ptr &, IChat_member_ptr) = 0;
-        virtual void leave_user(anet::socket_data_ptr &) = 0;
-        virtual void leave_all() = 0;
-        virtual ~IConnection() = default;
+    public:
+        IChat_user(const common::name_t& name, const common::pass_t& pass)
+            : name_(name), pass_(pass) {}
+        virtual ~IChat_user() = default;
+        
+    public:
+        virtual common::name_t get_pass() const = 0;
+        virtual common::pass_t get_name() const = 0;
     };
-    typedef std::shared_ptr<IConnection> IConnection_ptr;
+    typedef std::shared_ptr<IChat_user> IChat_user_ptr;
+     
+    struct IConnections_manager 
+        : protected std::enable_shared_from_this<IConnections_manager>
+    {
+        virtual void enter_user(const anet::socket_data_ptr &) = 0;
+        virtual void leave_user(const anet::socket_data_ptr &) = 0;
+        virtual void leave_everyone() = 0;
+        
+        virtual void send_command(const anet::socket_data_ptr &, common::command) = 0;
+        virtual ~IConnections_manager() = default;
+    };
+    typedef std::shared_ptr<IConnections_manager> IConnections_manager_ptr;
+
+    struct IChannel;
+    typedef std::shared_ptr<IChannel> IChannel_ptr;
+    
+    struct IChannel_member
+    {
+    protected:
+        IChannel_ptr myChannel_;
+        IChat_user_ptr myData_;
+        
+    public:
+        IChannel_member(const IChannel_ptr& myChannel, const IChat_user_ptr& myData)
+            : myChannel_(myChannel), myData_(myData) {}
+
+    public:
+        virtual void send_command_handler(anet::socket_data_ptr& socketData, const anet::err_c& error_c) = 0;
+        virtual void start_receiving_messages(const anet::socket_data_ptr& socketData) = 0;
+    };
+    typedef std::unique_ptr<IChannel_member> IChannel_member_ptr;
+    
+    struct IChannel
+        : protected std::enable_shared_from_this<IChannel>
+    {
+    protected:
+        IConnections_manager_ptr connectionManager_;
+        
+    public:
+        IChannel(const IConnections_manager_ptr& connectionManager)
+            : connectionManager_(connectionManager) {}
+        virtual ~IChannel() = default;
+    
+    public:
+        virtual void enter_user(const anet::socket_data_ptr &, const IChat_user_ptr&) = 0;
+        virtual void normal_leave_user(const anet::socket_data_ptr &) = 0;
+        virtual void forced_leave_user(const anet::socket_data_ptr &) = 0;
+        virtual void leave_everyone() = 0;
+
+        virtual void send_everyone(const common::msg_type&) = 0;
+        virtual void send_history(const anet::socket_data_ptr& socketData, IChannel_member* recipient) = 0;
+    };
 }

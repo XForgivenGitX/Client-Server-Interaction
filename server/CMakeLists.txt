@@ -7,7 +7,7 @@ set(EXEC_NAME ${PROJECT_NAME}-server)
 set(${EXEC_NAME}_DIR_ACCEPTOR acceptor)
 set(${EXEC_NAME}_DIR_DATABASE database)
 set(${EXEC_NAME}_DIR_CHANNELS channel)
-set(${EXEC_NAME}_DIR_CONNECTIONS connections)
+set(${EXEC_NAME}_DIR_CONNECTIONS connection)
 
 set(${EXEC_NAME}_INCLUDE_DIRS 
     ${${EXEC_NAME}_DIR_DATABASE}
@@ -18,8 +18,8 @@ set(${EXEC_NAME}_INCLUDE_DIRS
 
 set(${EXEC_NAME}_SRC
     ${${EXEC_NAME}_DIR_DATABASE}/database.cpp
-    ${${EXEC_NAME}_DIR_CHANNELS}/chat_member.cpp
-    ${${EXEC_NAME}_DIR_CHANNELS}/channel.cpp
+    ${${EXEC_NAME}_DIR_CHANNELS}/users.cpp
+    ${${EXEC_NAME}_DIR_CHANNELS}/channels.cpp
     ${${EXEC_NAME}_DIR_ACCEPTOR}/acceptor.cpp
     ${${EXEC_NAME}_DIR_ACCEPTOR}/startup_server.cpp
     ${${EXEC_NAME}_DIR_CONNECTIONS}/connections_manager.cpp
@@ -41,9 +41,18 @@ target_compile_options(${EXEC_NAME} PRIVATE
     -Wextra
     -Wpedantic 
     -std=c++17 
-    -DSERVER_ENABLE_HANDLER_TRACKING
-    -DDB_LOG_SEVERITY=info
-    -DSERVER_LOG_SEVERITY=info
+    
+    -DACCEPTOR_ENABLE_HANDLER_TRACKING
+    -DACCEPTOR_LOG_SEVERITY=info
+    -DACCEPTOR_DETAIL_LOG
+
+    -DDATABASE_ENABLE_HANDLER_TRACKING
+    -DDATABASE_LOG_SEVERITY=debug
+    -DDATABASE_DETAIL_LOG
+
+    -DCONNECT_ENABLE_HANDLER_TRACKING
+    -DCONNECT_LOG_SEVERITY=trace
+    -DCONNECT_DETAIL_LOG
     )
 
 target_include_directories(${EXEC_NAME} PRIVATE 

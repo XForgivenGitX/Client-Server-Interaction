@@ -30,7 +30,7 @@ namespace anet
         ~socket_data();
     
     public: 
-        void shutdown() noexcept; 
+        void shutdown(err_c& error_c) noexcept; 
         ip_type get_ip() const;
         std::size_t get_handle();
     };

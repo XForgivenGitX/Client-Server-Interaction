@@ -12,37 +12,42 @@
 
 namespace lg
 {
+    using std::string;
+    using std::ostringstream;
+    
     namespace lg = boost::log;
     namespace trivial = lg::trivial;
     namespace keywords = lg::keywords;
     namespace sinks = boost::log::sinks;
 
-    template <typename T>
-    struct add_format
-    {
-        const T &ref_;
+    // template <typename T>
+    // struct add_format
+    // {
+    //     const T &ref_;
 
-    public:
-        add_format(const T &ref) : ref_(ref) {}
-    };
+    // public:
+    //     add_format(const T &ref) : ref_(ref) {}
+    // };
 
-    template <typename T>
-    std::ostringstream &operator<<(std::ostringstream &stream, add_format<T> value)
-    {
-        stream << "\n\t$" << value.ref_;
-        return stream;
-    }
+    // template <typename T>
+    // ostringstream &operator<<(ostringstream &stream, add_format<T> value)
+    // {
+    //     stream << "\n\t\t$" << value.ref_;
+    //     return stream;
+    // }
 
-    template <typename... Args>
-    std::string build_log(const char *source, Args &&...args)
-    {
-        std::ostringstream stream;
-        stream << "\n@" << source;
-        (stream << ... << add_format(std::forward<Args>(args))) << "\n\n";
-        return stream.str();
-    }
+    // template <typename... Args>
+    // string build_log(const string& source, Args &&...args)
+    // {
+    //     ostringstream stream;
+    //     stream << "\n\t@" << source;
+    //     (stream << ... << add_format(std::forward<Args>(args))) << "\n";
+    //     return stream.str();
+    // }
+
     void init_logger();
-    const char *address_cat(const char *lhs, const void *rhs);
-    std::string boolalpha_cast(bool rhs);
-    std::string command_to_str(common::command cmd);
+    string boolalpha_cast(bool rhs);
+    string build_arg(const string& arg);
+    string build_src(const string& source);
+    string command_to_str(common::command cmd);
 }

@@ -79,7 +79,13 @@ namespace utility
         }
 
         template <typename Obj>
-        task_wrapped(F Obj::*fptr, std::shared_ptr<Obj> caller)
+        task_wrapped(F Obj::*fptr, const std::unique_ptr<Obj>& caller)
+            : taskUnwrapped_(detail::call_from_object<F, Obj, Args...>{fptr, &*caller})
+        {
+        }
+        
+        template <typename Obj>
+        task_wrapped(F Obj::*fptr, const std::shared_ptr<Obj>& caller)
             : taskUnwrapped_(detail::call_from_object<F, Obj, Args...>{fptr, &*caller})
         {
         }
@@ -105,8 +111,9 @@ namespace utility
             catch (const boost::thread_interrupted &)
             {
                 BOOST_LOG_TRIVIAL(error) 
-                    << lg::build_log("function wrapper" , 
-                        "interrupt caugh. thread id:", boost::this_thread::get_id());
+                    << lg::build_src("function wrapper: interrupt caugh")
+                    << lg::build_arg("threadid: ")
+                    << boost::this_thread::get_id() << '\n';
             }
             try
             {
@@ -116,20 +123,23 @@ namespace utility
             catch (const std::exception &ex)
             {
                 BOOST_LOG_TRIVIAL(error) 
-                    << lg::build_log("function wrapper" , 
-                        "exception caugh. thread id:", boost::this_thread::get_id(), ex.what());
+                    << lg::build_src("function wrapper: exception caugh")
+                    << lg::build_arg("threadid: ")
+                    << boost::this_thread::get_id() << '\n';
             }
             catch (const boost::thread_interrupted &)
             {
                 BOOST_LOG_TRIVIAL(error) 
-                    << lg::build_log("function wrapper" , 
-                        "interrupt caugh. thread id:", boost::this_thread::get_id());
+                    << lg::build_src("function wrapper: interrupt caugh") 
+                    << lg::build_arg("threadid: ")
+                    << boost::this_thread::get_id() << '\n';
             }
             catch (...)
             {
                 BOOST_LOG_TRIVIAL(error) 
-                    << lg::build_log("function wrapper" , 
-                        "unknown exception caugh. thread id:", boost::this_thread::get_id());
+                    << lg::build_src("function wrapper: unknown exception caugh")
+                    << lg::build_arg("threadid: ")
+                    << boost::this_thread::get_id() << '\n';
             }
             return decltype(taskUnwrapped_(std::forward<Args>(args)...), 
                         std::optional<dummy>())();

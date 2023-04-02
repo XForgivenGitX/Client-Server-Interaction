@@ -13,7 +13,8 @@ void client_session::connection_handler(anet::socket_data_ptr &socketData, const
 {
 	if (error)
 	{
-		socketData->shutdown();
+		anet::err_c ignore;
+		socketData->shutdown(ignore);
 		return;
 	}
 	else
@@ -53,7 +54,8 @@ void client_session::send_command_handler(anet::socket_data_ptr &socketData, con
 {
 	if (error)
 	{
-		socketData->shutdown();
+		anet::err_c ignore;
+		socketData->shutdown(ignore);
 		return;
 	}
 	else
@@ -69,7 +71,8 @@ void client_session::receive_command_handler(anet::socket_data_ptr &socketData, 
 	splitedPack.disassemble(socketData->receive_buffer_);
 	if (error || !splitedPack.isMatched())
 	{
-		socketData->shutdown();
+		anet::err_c ignore;
+		socketData->shutdown(ignore);
 		return;
 	}
 	switch (splitedPack.get_command())
@@ -90,7 +93,8 @@ void client_session::receive_command_handler(anet::socket_data_ptr &socketData, 
 		break;
 
 	default:
-		socketData->shutdown();
+		anet::err_c ignore;
+		socketData->shutdown(ignore);
 	}
 }
 
@@ -152,7 +156,8 @@ void client_session::lobby_responce_handler(anet::socket_data_ptr &socketData, c
 	pack.disassemble(socketData->receive_buffer_);
 	if (error || !pack.isMatched())
 	{
-		socketData->shutdown();
+		anet::err_c ignore;
+		socketData->shutdown(ignore);
 		return;
 	}
 	switch (pack.get_command())
@@ -214,14 +219,15 @@ void client_session::receive_message_handler(anet::socket_data_ptr &socketData, 
 	pack.disassemble(socketData->receive_buffer_);
 	if (error || !pack.isMatched())
 	{
-		socketData->shutdown();
+		anet::err_c ignore;
+		socketData->shutdown(ignore);
 		return;
 	}
 
 	switch (pack.get_command())
 	{
 	case common::command::SEND_MESSAGE:
-		std::cout << pack.get_argument(0) << '\n';
+		std::cout << pack.get_arg(0) << '\n';
 		receive_message(socketData);
 		break;
 
@@ -238,7 +244,8 @@ void client_session::send_message_handler(anet::socket_data_ptr &socketData, con
 {
 	if (error)
 	{
-	    socketData->shutdown();
+	    anet::err_c ignore;
+		socketData->shutdown(ignore);
 	}
 }
 

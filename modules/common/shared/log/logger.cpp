@@ -14,23 +14,25 @@ namespace lg
         lg::core::get()->set_filter(trivial::severity >= trivial::info);
 #else
         lg::add_console_log(std::cout, keywords::format = "[%TimeStamp%]<%Severity%>:%Message%");
-        lg::core::get()->set_filter(trivial::severity >= trivial::info);
+        lg::core::get()->set_filter(trivial::severity >= trivial::trace);
 #endif
         lg::add_common_attributes();
-    }
-
-    const char *address_cat(const char *lhs, const void *rhs)
-    {
-        std::ostringstream stream;
-        stream << lhs << rhs;
-
-        return stream.str().c_str();
     }
 
     std::string boolalpha_cast(bool rhs)
     {
         if(rhs) return "true";
         else return "false";
+    }
+
+    string build_arg(const string& arg)
+    {
+        return "\t\t$" + arg + "\n";
+    }
+
+    string build_src(const string& source)
+    {
+        return "\n\t@" + source + "\n";
     }
   
     std::string command_to_str(common::command cmd)

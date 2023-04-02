@@ -43,21 +43,21 @@ BOOST_FIXTURE_TEST_CASE(disassemble_pack, fixture)
     pack.disassemble(case_1.expectedPack_);
     BOOST_CHECK(pack.get_command() == case_1.cmd_);
     for(std::size_t it = 0, end = case_1.args_.size(); it != end; ++it)
-        BOOST_CHECK_EQUAL(pack.get_argument(it), case_1.args_.at(it));
+        BOOST_CHECK_EQUAL(pack.get_arg(it), case_1.args_.at(it));
     
     pack.disassemble(case_2.expectedPack_);
     BOOST_CHECK(pack.get_command() == case_2.cmd_);
     for(std::size_t it = 0, end = case_2.args_.size(); it != end; ++it)
-        BOOST_CHECK_EQUAL(pack.get_argument(it), case_2.args_.at(it));
+        BOOST_CHECK_EQUAL(pack.get_arg(it), case_2.args_.at(it));
 
     pack.disassemble(case_3.expectedPack_);
     BOOST_CHECK(pack.get_command() == case_3.cmd_);
     for(std::size_t it = 0, end = case_3.args_.size() - 2; it != end; ++it)
-        BOOST_CHECK_EQUAL(pack.get_argument(it), case_3.args_.at(it + 2));
+        BOOST_CHECK_EQUAL(pack.get_arg(it), case_3.args_.at(it + 2));
     
     pack.disassemble(case_4.expectedPack_);
     BOOST_CHECK(pack.get_command() == case_4.cmd_);
-    BOOST_CHECK_THROW(pack.get_argument(0), std::out_of_range);
+    BOOST_CHECK_THROW(pack.get_arg(0), std::out_of_range);
 };
 
 BOOST_FIXTURE_TEST_CASE(correct_number_arguments, fixture)

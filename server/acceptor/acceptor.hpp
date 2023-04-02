@@ -9,15 +9,15 @@
 
 namespace server
 {
-    struct acceptor 
+    struct acceptor final
     {
     private:
         io__::thread_pool pool_;
         io__::io_context signalIos_;
-        IConnection_ptr connectionManager_;
+        IConnections_manager_ptr connectionManager_;
         
     public:
-        acceptor(anet::port_t port, IConnection_ptr connectionManager);
+        acceptor(anet::port_t port, const IConnections_manager_ptr& connectionManager);
         void join();
         
     private:

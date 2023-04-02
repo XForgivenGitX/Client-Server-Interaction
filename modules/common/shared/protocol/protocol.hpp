@@ -34,7 +34,7 @@ namespace common
         constexpr unsigned NAME_LOW_LENGHT = 5;
         constexpr unsigned NAME_HIGH_LENGHT = 20;
     }
-
+    
     enum class room_access : unsigned
     {
         PUBLIC,
@@ -65,6 +65,8 @@ namespace common
 
         DETACH_ROOM,
         SUCCESS_DETACH_ROOM,
+
+        GET_CHANNEL_HISTORY,
     };
 
     struct splited_package
@@ -81,7 +83,7 @@ namespace common
         command get_command() const;
         
         [[nodiscard]] 
-        packet_t get_argument(std::size_t argIndex) const;
+        packet_t get_arg(std::size_t argIndex) const;
     };
 
     struct transf_package : public splited_package

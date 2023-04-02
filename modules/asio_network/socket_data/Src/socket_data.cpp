@@ -6,30 +6,27 @@ namespace anet
     {
     }
 
-    void socket_data::shutdown() noexcept
+    void socket_data::shutdown(err_c& error_c) noexcept
     {
-        if (!socket_.is_open())
-            return;
-        err_c error_c;
         socket_.shutdown(ip::tcp::socket::shutdown_both, error_c);
-#ifdef NETWORK_ENABLE_HANDLER_TRACKING
-        BOOST_LOG_TRIVIAL(info)
-            << lg::build_log("called shutdown socket",
-                "sock: " + std::to_string(get_handle()), 
-                "status: " + error_c.message());
-#endif
-        socket_.close();
+        socket_.close(error_c);
     }
+    
     ip_type socket_data::get_ip() const
     {
         return socket_.remote_endpoint().address().to_string();
     }
+    
     std::size_t socket_data::get_handle()
     {
         return socket_.native_handle();
     }
 
-    socket_data::~socket_data() { shutdown(); }
+    socket_data::~socket_data() 
+    { 
+        err_c ignore;
+        shutdown(ignore);
+    }
 
     socket_data_ptr make_socket_data(const io__::any_io_executor &ios)
     {
