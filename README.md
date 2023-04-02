@@ -13,9 +13,14 @@ The server accepts incoming connections and sends them to the lobby for further 
 - Join an existing one.\
 In the room, the user can send messages that will be delivered to all participants in the room. When a user logs in and out, corresponding messages are sent to all chat participants.
 
+## Example
+<img src="https://github.com/XForgivenGitX/QuickChat/blob/master/example.png" wigth="25%"/>
+
 ## What's next
 - Saving the message history of each room and sending it to new participants. 
 - Add the ability to display online participants and rooms to the user.
-## Example
-<img src="https://github.com/XForgivenGitX/QuickChat/blob/master/example.png" wigth="25%"/>
+- Support for storing user information in a database(SQL).
+- Add a Doxygen documentation generator
+- Python tests
+
 
