@@ -30,11 +30,11 @@ void send_receive::send_called_function(const err_c &error_c,
 {
 #ifdef NETWORK_ENABLE_HANDLER_TRACKING
     BOOST_LOG_TRIVIAL(info)
-            << lg::build_log("send package",
-                "sock: " + std::to_string(wrapper.socketData_->get_handle()), 
-                "bytes: " + std::to_string(bytesTransferred), 
-                "pack: " + wrapper.socketData_->send_buffer_, 
-                "status: " + error_c.message());
+            << lg::build_src("send package")
+                << lg::build_arg("sock: " + std::to_string(wrapper->socketData_->get_handle()))
+                << lg::build_arg("bytes: " + std::to_string(bytesTransferred))
+                << lg::build_arg("pack: " + wrapper->socketData_->send_buffer_) 
+                << lg::build_arg("status: " + error_c.message());
     
 #endif
     wrapper->functionWrapped_(wrapper->socketData_, error_c);
@@ -46,11 +46,11 @@ void send_receive::receive_called_function(const err_c &error_c,
     wrapper->socketData_->receive_buffer_.resize(bytesTransferred);
 #ifdef NETWORK_ENABLE_HANDLER_TRACKING
     BOOST_LOG_TRIVIAL(info)
-            << lg::build_log("receive package",
-                "sock: " + std::to_string(wrapper.socketData_->get_handle()), 
-                "bytes: " + std::to_string(bytesTransferred), 
-                "pack: " + wrapper.socketData_->receive_buffer_, 
-                "status: " + error_c.message());
+            << lg::build_src("receive package")
+                << lg::build_arg("sock: " + std::to_string(wrapper->socketData_->get_handle()))
+                << lg::build_arg("bytes: " + std::to_string(bytesTransferred))
+                << lg::build_arg("pack: " + wrapper->socketData_->receive_buffer_)
+                << lg::build_arg("status: " + error_c.message());
 #endif
     wrapper->functionWrapped_(wrapper->socketData_, error_c);
 }

@@ -46,12 +46,13 @@ namespace server
 		add_message_to_history(msg);
 	}
 
-	void ordinary_channel::send_history(const anet::socket_data_ptr& socketData, IChannel_member* recipient)
+	void ordinary_channel::send_history(const anet::socket_data_ptr& socketData)
 	{
-		for_each_history([&socketData, recipient](const auto& msg)
+		auto socketMember = get_channel_member(socketData);
+		for_each_history([&socketData, &socketMember](auto& msg)
 		{	
 			socketData->send_buffer_ = common::assemble_package(common::command::RECEIVE_MESSAGE, {msg});
-			anet::send_receive::send(socketData, {&IChannel_member::send_command_handler, recipient});
+			anet::send_receive::send(socketData, {&IChannel_member::send_command_handler, socketMember->second});
 		});
 	}
 }

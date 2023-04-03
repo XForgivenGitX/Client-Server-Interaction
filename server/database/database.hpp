@@ -87,8 +87,9 @@ namespace db
         active_members_t activeSockets_;
         channel_history_t channelHistory_;
         mutable std::shared_mutex activeSocketsMut, channelHistoryMut;
-
+    
     public:
+        active_members_t::const_iterator get_channel_member(const anet::socket_data_ptr& socketData);
         void insert_chat_member(const anet::socket_data_ptr& socketData, server::IChannel_member_ptr&& channelMember);
         void erase_chat_member(const anet::socket_data_ptr& socketData);
         void for_each_member(active_members_func func);

@@ -25,9 +25,9 @@ namespace server
 	
 	public:
 		void start_receiving_messages(const anet::socket_data_ptr& socketData) override;
+		void send_command_handler(anet::socket_data_ptr&, const anet::err_c&) override;
 		
 		void send_command(const anet::socket_data_ptr& socketData, common::command cmd);
-		void send_command_handler(anet::socket_data_ptr& socketData, const anet::err_c& error_c);
 		void receive_command_handler(anet::socket_data_ptr& socketData, const anet::err_c& error_c);
 	};
 }

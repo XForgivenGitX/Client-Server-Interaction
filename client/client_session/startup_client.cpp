@@ -3,6 +3,7 @@
 int main(int argc, char **argv)
 {
     system("chcp 1251");
+    lg::init_logger();
     io__::io_context ios;
     client::client_session client(ios, {9001, argv[1]});
     auto lamd = [&ios]{ios.run();};

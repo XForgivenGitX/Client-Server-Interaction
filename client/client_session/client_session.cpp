@@ -189,8 +189,7 @@ void client_session::lobby_responce_handler(anet::socket_data_ptr &socketData, c
 
 void client_session::start_communication(anet::socket_data_ptr &socketData)
 {
-	io__::post(socketData->socket_.get_executor(), [&]
-			   { receive_message(socketData); });
+	io__::post(socketData->socket_.get_executor(), [&]{ receive_message(socketData); });
 	std::string msgBuff;
 	bool leave = false;
 	while (!leave)
@@ -200,11 +199,17 @@ void client_session::start_communication(anet::socket_data_ptr &socketData)
 			continue;
 		if (msgBuff == "-q")
 		{
-			socketData->send_buffer_ = common::assemble_package(command::DETACH_ROOM, {msgBuff});
+			socketData->send_buffer_ = common::assemble_package(command::DETACH_ROOM);
 			leave = true;
 		}
+		else if(msgBuff == "-h")
+		{
+			socketData->send_buffer_ = common::assemble_package(command::GET_CHANNEL_HISTORY);
+		}
 		else
+		{
 			socketData->send_buffer_ = common::assemble_package(command::SEND_MESSAGE, {msgBuff});
+		}
 		anet::send_receive::send(socketData, {send_message_handler, this});
 	}
 }
@@ -226,12 +231,12 @@ void client_session::receive_message_handler(anet::socket_data_ptr &socketData, 
 
 	switch (pack.get_command())
 	{
-	case common::command::SEND_MESSAGE:
+	case common::command::RECEIVE_MESSAGE:
 		std::cout << pack.get_arg(0) << '\n';
 		receive_message(socketData);
 		break;
 
-	case common::command::DETACH_ROOM:
+	case common::command::SUCCESS_DETACH_ROOM:
 		identify_and_send_command(socketData);
 		break;
 

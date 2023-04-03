@@ -22,6 +22,11 @@ namespace anet
         return socket_.native_handle();
     }
 
+    io__::any_io_executor socket_data::get_executor()
+    {
+        return socket_.get_executor();
+    }
+
     socket_data::~socket_data() 
     { 
         err_c ignore;

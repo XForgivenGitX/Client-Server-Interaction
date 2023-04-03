@@ -56,7 +56,8 @@ namespace server
 			case command::SEND_MESSAGE:
 			{	
 				auto msg = splitedPack.get_arg(protocol::MESSAGE_INDEX);
-				myChannel_->send_everyone(configure_message(msg));
+				io__::post(socketData->get_executor(), std::bind
+						(&IChannel::send_everyone, std::ref(myChannel_), configure_message(msg)));
 				anet::send_receive::receive(socketData, {&ordinary_channel_member::receive_command_handler, this});
 			}
 			break;
@@ -69,7 +70,9 @@ namespace server
 
 			case command::GET_CHANNEL_HISTORY:
 			{
-				myChannel_->send_history(socketData, this);
+				io__::post(socketData->get_executor(), std::bind
+						(&IChannel::send_history, std::ref(myChannel_), std::ref(socketData)));
+				anet::send_receive::receive(socketData, {&ordinary_channel_member::receive_command_handler, this});
 			}
 			break;
 

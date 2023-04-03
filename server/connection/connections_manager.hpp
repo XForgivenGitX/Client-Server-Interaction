@@ -14,7 +14,8 @@ namespace server
     struct connections_manager :
         public IConnections_manager,
         private db::users_database,
-        private db::channels_database
+        private db::channels_database,
+        public std::enable_shared_from_this<connections_manager>
     {
         using cmd_type = common::command;
 

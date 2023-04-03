@@ -10,7 +10,7 @@ namespace anet
     {
         typedef utility::task_wrapped<void(socket_data_ptr&, 
                                 const err_c &)> callback_func_t;
-
+    
     public:
         static void send(const socket_data_ptr& socketData, callback_func_t &&handler);
         static void receive(const socket_data_ptr& socketData, callback_func_t &&handler,

@@ -132,7 +132,8 @@ namespace db
 		auto [insteadedMembIt, status] = activeSockets_.emplace
 				(std::make_pair(socketData, std::move(channelMember)));
 		auto& [socketData_, channelMember_] = *insteadedMembIt;
-		channelMember_->start_receiving_messages(socketData_);
+		io__::post(socketData_->get_executor(), std::bind
+				(&server::IChannel_member::start_receiving_messages, std::ref(channelMember_), socketData_));
 		if(!status)
 			throw std::runtime_error("error adding a new member in room");
 	}
@@ -162,5 +163,12 @@ namespace db
             for(auto& msg : channelHistory_)
                 func(msg);
     }
+
+	channel_database::active_members_t::const_iterator 
+		channel_database::get_channel_member(const anet::socket_data_ptr& socketData)
+	{
+		std::shared_lock lock(activeSocketsMut);
+		return activeSockets_.find(socketData);
+	}
 
 }
