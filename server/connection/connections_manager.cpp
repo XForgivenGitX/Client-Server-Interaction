@@ -177,7 +177,6 @@ namespace server
 				<< lg::build_src("unknown command accepted");
 #endif
 			leave_user(socketData);
-			break;
 		}
 		}
 	}
