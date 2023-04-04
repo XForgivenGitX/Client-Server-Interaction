@@ -6,7 +6,7 @@ namespace client
 client_session::client_session(io__::io_context &ios, const anet::end_point_wrapper &endPoint)
 {
 	anet::connection::connection_request(anet::make_socket_data(ios.get_executor()),
-										 endPoint, {&connection_handler, this});
+										 endPoint, {&client_session::connection_handler, this});
 }
 
 void client_session::connection_handler(anet::socket_data_ptr &socketData, const boost::system::error_code &error)
@@ -47,7 +47,7 @@ void client_session::authorization(anet::socket_data_ptr &socketData)
 void client_session::send_command(anet::socket_data_ptr &socketData, common::command cmd, const common::transf_package::args_t &args)
 {
 	socketData->send_buffer_ = common::assemble_package(cmd, args);
-	anet::send_receive::send(socketData, {send_command_handler, this});
+	anet::send_receive::send(socketData, {&client_session::send_command_handler, this});
 }
 
 void client_session::send_command_handler(anet::socket_data_ptr &socketData, const boost::system::error_code &error)
@@ -60,7 +60,7 @@ void client_session::send_command_handler(anet::socket_data_ptr &socketData, con
 	}
 	else
 	{
-		anet::send_receive::receive(socketData, {receive_command_handler, this});
+		anet::send_receive::receive(socketData, {&client_session::receive_command_handler, this});
 	}
 }
 
@@ -123,14 +123,14 @@ void client_session::identify_and_send_command(anet::socket_data_ptr &socketData
 		std::cout << "Room name:";
 		std::getline(std::cin, cmdBuff);
 		socketData->send_buffer_ = common::assemble_package(command::JOIN_ROOM, {cmdBuff});
-		anet::send_receive::send(socketData, {lobby_request_handler, this});
+		anet::send_receive::send(socketData, {&client_session::lobby_request_handler, this});
 	}
 	else if (cmdBuff == "create")
 	{
 		std::cout << "Room name:";
 		std::getline(std::cin, cmdBuff);
 		socketData->send_buffer_ = common::assemble_package(command::CREATE_ROOM, {cmdBuff});
-		anet::send_receive::send(socketData, {lobby_request_handler, this});
+		anet::send_receive::send(socketData, {&client_session::lobby_request_handler, this});
 	}
 	else
 	{
@@ -147,7 +147,7 @@ void client_session::enter_to_lobby(anet::socket_data_ptr &socketData)
 
 void client_session::lobby_request_handler(anet::socket_data_ptr &socketData, const boost::system::error_code &error)
 {
-	anet::send_receive::receive(socketData, {lobby_responce_handler, this});
+	anet::send_receive::receive(socketData, {&client_session::lobby_responce_handler, this});
 }
 
 void client_session::lobby_responce_handler(anet::socket_data_ptr &socketData, const boost::system::error_code &error)
@@ -210,13 +210,13 @@ void client_session::start_communication(anet::socket_data_ptr &socketData)
 		{
 			socketData->send_buffer_ = common::assemble_package(command::SEND_MESSAGE, {msgBuff});
 		}
-		anet::send_receive::send(socketData, {send_message_handler, this});
+		anet::send_receive::send(socketData, {&client_session::send_message_handler, this});
 	}
 }
 
 void client_session::receive_message(anet::socket_data_ptr &socketData)
 {
-	anet::send_receive::receive(socketData, {receive_message_handler, this});
+	anet::send_receive::receive(socketData, {&client_session::receive_message_handler, this});
 }
 void client_session::receive_message_handler(anet::socket_data_ptr &socketData, const boost::system::error_code &error)
 {

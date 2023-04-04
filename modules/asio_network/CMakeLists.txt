@@ -53,8 +53,9 @@ target_include_directories(${LIBRARY_NAME}
 target_link_libraries(${LIBRARY_NAME} PRIVATE 
     ${Boost_LIBRARIES}
     ${PROJECT_NAME}-shared
-    wsock32.a 
-    ws2_32.a
+
+    #wsock32.a 
+    #ws2_32.a
     )
 
 ############################################################
