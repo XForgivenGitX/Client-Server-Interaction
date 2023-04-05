@@ -2,6 +2,12 @@
 
 namespace db
 {
+	int callback(void*,int,char**,char**)
+    {
+        return 0;
+    }
+	
+	
 	users_database::find_user_data_ret_v users_database::find_user_data
 		(const common::name_t &name, const common::pass_t &pass) const
 	{

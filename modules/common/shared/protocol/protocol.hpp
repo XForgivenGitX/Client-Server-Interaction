@@ -33,6 +33,8 @@ namespace common
         constexpr unsigned ROOM_NAME_HIGH_LENGHT = 20;
         constexpr unsigned NAME_LOW_LENGHT = 5;
         constexpr unsigned NAME_HIGH_LENGHT = 20;
+        constexpr unsigned PASS_LOW_LENGHT = 5;
+        constexpr unsigned PASS_HIGH_LENGHT = 20;
     }
     
     enum class room_access : unsigned

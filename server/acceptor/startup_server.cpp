@@ -6,6 +6,9 @@ using namespace server;
 int main(int argc, char** argv) 
 { 
     lg::init_logger();
+    db::chat_database db;
+    db.open_database();
+    db.create_tables();
     // if(argc != 2) 
     // {
     //     std::cerr << "Incorrect arguments. Usage: <port> \n";

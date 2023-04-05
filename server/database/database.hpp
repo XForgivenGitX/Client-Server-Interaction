@@ -7,13 +7,76 @@
 #include <optional>
 #include <shared_mutex>
 #include <boost/noncopyable.hpp>
-
+#include <sqlite3.h>
 #include "socket_data.hpp"
 #include "logger.hpp"
 #include "interface.hpp"
 
+namespace db::query
+{
+    inline const std::string create_users_table = 
+    "CREATE TABLE IF NOT EXISTS Users"
+    "("
+        "user_id " 
+            "INTEGER "
+            "PRIMARY KEY "                                  
+            "NOT NULL, "
+        "name "     
+            "VARCHAR( " + std::to_string(common::limits::NAME_HIGH_LENGHT) + " ) " 
+            "CHECK( LENGTH(name) >= " + std::to_string(common::limits::NAME_LOW_LENGHT) + " ) "
+            "NOT NULL, "
+        "pass "       
+            "VARCHAR(" + std::to_string(common::limits::PASS_HIGH_LENGHT) + ") "
+            "CHECK( LENGTH(name) >= " + std::to_string(common::limits::PASS_LOW_LENGHT) + " ) "
+            "NOT NULL, "
+        "date_reg "   
+            "INTEGER, "
+        "CONSTRAINT name_unique UNIQUE(name)"
+        
+    ");";
+    
+
+}
+
+
 namespace db
 {
+    int callback(void*,int,char**,char**);
+    struct chat_database
+    {   
+        sqlite3* myDb;
+        void open_database()
+        {
+            if(sqlite3_open("sqlite3_chat.db", &myDb))
+            {
+                std::cout << "error db opened\n";
+            }
+            else
+            {
+                std::cout << "thread safe:" << sqlite3_threadsafe() << std::endl;
+            }
+        }
+
+        void create_tables()
+        {
+            char* error_msg = nullptr;
+            auto err_c = sqlite3_exec
+                (myDb, query::create_users_table.c_str(), &callback, nullptr, &error_msg);
+            if(err_c != SQLITE_OK)
+            {
+                std::cout << "error table created: " << error_msg << '\n';
+            }
+            else
+            {
+                std::cout << "good\n";
+            }
+            
+        }
+    };
+    
+    
+    
+    
     struct users_database
     {
         typedef std::map<common::name_t, server::IChat_user_ptr> 

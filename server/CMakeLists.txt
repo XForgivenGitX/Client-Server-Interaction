@@ -27,7 +27,17 @@ set(${EXEC_NAME}_SRC
 
 set(Boost_USE_STATIC_LIBS ON)
 set(BOOST_COMPONENTS thread system)
-find_package(Boost COMPONENTS ${BOOST_COMPONENTS} REQUIRED)
+
+find_package(Boost COMPONENTS ${BOOST_COMPONENTS})
+find_package(SQLite3)
+
+if(NOT ${Boost_FOUND})
+    message(FATAL_ERROR "BOOST NOT FOUND: ABORT")
+endif()
+
+if(NOT ${SQLite3_FOUND})
+    message(FATAL_ERROR "SQLITE3 NOT FOUND: ABORT")
+endif()
 
 add_executable(${EXEC_NAME} ${${EXEC_NAME}_SRC})
 
@@ -58,12 +68,14 @@ target_compile_options(${EXEC_NAME} PRIVATE
 target_include_directories(${EXEC_NAME} PRIVATE 
     ${${EXEC_NAME}_INCLUDE_DIRS} 
     ${Boost_INCLUDE_DIRS}
+    ${SQLite3_INCLUDE_DIRS}
     )
 
 target_link_libraries(${EXEC_NAME} PRIVATE 
     ${Boost_LIBRARIES} 
     ${PROJECT_NAME}-shared
     ${PROJECT_NAME}-network
+    ${SQLite3_LIBRARIES}
     )
 
 ############################################################
